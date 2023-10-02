@@ -5,10 +5,9 @@ import main.java.variables.ScpVars;
 
 import java.util.BitSet;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import static main.java.config.Parameters.FOOD_NUMBER;
-import static main.java.variables.ScpVars.ROWS;
+import static main.java.variables.ScpVars.getROWINTS;
 
 
 public class CommonUtils {
@@ -68,9 +67,7 @@ public class CommonUtils {
                     return x;
                 });
         if (optCoveredRows.isPresent()) {
-            BitSet rows = IntStream.range(0, ROWS)
-                    .boxed()
-                    .collect(BitSet::new, BitSet::set, BitSet::or);
+            BitSet rows = getROWINTS();
             rows.andNot(optCoveredRows.get());
             return rows;
         }

@@ -24,16 +24,16 @@ public class ABCSCP {
     }
 
     public BitSet createSolution() {
-        BitSet xj = new BitSet(COLUMNS);
+        BitSet fs = new BitSet(COLUMNS);
         int[] u = new int[ROWS];
 
-        generateSolution(xj, u);
-        removeRedundantColumns(xj, u);
+        generateSolution(fs, u);
+        removeRedundantColumns(fs, u);
 
-        return xj;
+        return fs;
     }
 
-    private void generateSolution(BitSet xj, int[] u) {
+    private void generateSolution(BitSet fs, int[] u) {
         IntStream.range(0, ROWS)
                 .boxed()
                 .forEach(i -> {
@@ -41,29 +41,29 @@ public class ABCSCP {
                     int randomRC = cUtils.randomNumber(RC_SIZE);
                     int j = ai.stream().boxed().toList().get(randomRC);
 
-                    if (!xj.get(j)) {
-                        xj.set(j);
+                    if (!fs.get(j)) {
+                        fs.set(j);
                         BitSet bj = getRowsCoveredByColumn(j);
                         bj.stream().boxed().forEach(idx -> u[idx]++);
                     }
                 });
     }
 
-    private void removeRedundantColumns(BitSet xj, int[] u) {
-        int numColumns = xj.cardinality() + 1;
+    private void removeRedundantColumns(BitSet fs, int[] u) {
+        int numColumns = fs.cardinality() + 1;
         IntStream.range(1, numColumns)
                 .boxed()
                 .sorted(Comparator.reverseOrder())
                 .forEach(t -> {
                     int randomNum = cUtils.randomNumber(t);
-                    int j = xj.stream().boxed().toList().get(randomNum);
+                    int j = fs.stream().boxed().toList().get(randomNum);
                     BitSet bj = getRowsCoveredByColumn(j);
 
                     List<Integer> rowsCoveredByOneColumn =
                             bj.stream().boxed().filter(i -> u[i] < 2).toList();
 
                     if (rowsCoveredByOneColumn.isEmpty()) {
-                        xj.clear(j);
+                        fs.clear(j);
                         bj.stream().boxed().forEach(idx -> u[idx]--);
                     }
                 });

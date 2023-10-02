@@ -19,6 +19,7 @@ import static main.java.variables.ScpVars.setCOLUMNSCOVERINGROW;
 import static main.java.variables.ScpVars.setCOSTS;
 import static main.java.variables.ScpVars.setColumnsCoveringRow;
 import static main.java.variables.ScpVars.setCost;
+import static main.java.variables.ScpVars.setROWINTS;
 import static main.java.variables.ScpVars.setROWS;
 import static main.java.variables.ScpVars.setROWSCOVEREDBYCOLUMN;
 import static main.java.variables.ScpVars.setRowsCoveredByColumn;
@@ -42,6 +43,9 @@ public class Problem {
 
         setCOLUMNSCOVERINGROW(new ArrayList<>());
         setROWSCOVEREDBYCOLUMN(new ArrayList<>());
+
+        setROWINTS();
+        setBKS();
 
 
         for (int j = 0; j < getCOLUMNS(); j++) {
@@ -70,9 +74,6 @@ public class Problem {
         }
 
         scanner.close();
-
-        setBKS();
-
         logger.log("Problem [" + filePath + "] has been loaded.");
     }
 

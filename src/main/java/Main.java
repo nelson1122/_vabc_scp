@@ -32,8 +32,8 @@ public class Main {
         logger.log("Variant of the Artificial Bee Colony Algorithm ABC_SCP to solve the Set Covering Problem");
         logger.log("University of Cauca, 2023");
 
-        // runVABCSCPMonoThread();
-        runVABCSCPMultiThread();
+        runVABCSCPMonoThread();
+        // runVABCSCPMultiThread();
 
         logger.log("Algorithm has finished!");
     }

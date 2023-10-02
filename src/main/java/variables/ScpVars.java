@@ -3,6 +3,7 @@ package main.java.variables;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class ScpVars {
     public static int ROWS;
@@ -11,6 +12,8 @@ public class ScpVars {
     public static List<BitSet> COLUMNSCOVERINGROW;
     public static List<BitSet> ROWSCOVEREDBYCOLUMN;
     public static Map<String, Integer> BESTS;
+
+    public static BitSet ROWINTS;
 
     private ScpVars() {
     }
@@ -53,6 +56,16 @@ public class ScpVars {
 
     public static void setBESTS(Map<String, Integer> BESTS) {
         ScpVars.BESTS = BESTS;
+    }
+
+    public static void setROWINTS() {
+        ROWINTS = IntStream.range(0, ROWS)
+                .boxed()
+                .collect(BitSet::new, BitSet::set, BitSet::or);
+    }
+
+    public static BitSet getROWINTS() {
+        return (BitSet) ROWINTS.clone();
     }
 
     // Custom methods
