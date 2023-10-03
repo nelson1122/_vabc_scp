@@ -21,11 +21,14 @@ public class AbcVars {
     private Random RANDOM;
     private long SEED;
 
+    private int algorithmVariant;
+
     public AbcVars(long seed) {
         this.SEED = seed;
         this.RANDOM = new Random(seed);
         this.GLOBALMINS = new ArrayList<>();
         this.MEAN = 0d;
+        this.algorithmVariant = 0;
     }
 
     public List<BitSet> getFOODS() {
@@ -116,6 +119,13 @@ public class AbcVars {
         this.SEED = SEED;
     }
 
+    public int getAlgorithmVariant() {
+        return algorithmVariant;
+    }
+
+    public void setAlgorithmVariant(int algorithmVariant) {
+        this.algorithmVariant = algorithmVariant;
+    }
 
     // Custom Methods
     public void addFoodSource(BitSet foodSource) {

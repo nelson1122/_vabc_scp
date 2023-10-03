@@ -34,19 +34,19 @@ public class RowWeightedMutation {
         this.s = new double[COLUMNS];
     }
 
-    public BitSet apply(BitSet xj) {
+    public BitSet applyLocalSearch(BitSet fs) {
         Arrays.fill(w, 1);
         Arrays.fill(p, 0.0);
         Arrays.fill(s, 0.0);
 
-        xj = applyLocalSearch(xj);
+        fs = applyRowWeightMutationLocalSearch(fs);
 
-        return xj;
+        return fs;
     }
 
-    public BitSet applyLocalSearch(BitSet fs) {
-        BitSet xjMutation = (BitSet) fs.clone();
-        BitSet uncoveredRows = cUtils.findUncoveredRows(xjMutation);
+    private BitSet applyRowWeightMutationLocalSearch(BitSet fs) {
+        BitSet fsMutation = (BitSet) fs.clone();
+        BitSet uncoveredRows = cUtils.findUncoveredRows(fsMutation);
 
         int randomFood = cUtils.randomNumber(FOOD_NUMBER);
         BitSet rfs = vr.getFoodSource(randomFood);
@@ -62,13 +62,13 @@ public class RowWeightedMutation {
             improved = false;
 
             while (uncoveredRows.isEmpty()) {
-                double maxScore = xjMutation.stream()
+                double maxScore = fsMutation.stream()
                         .boxed()
                         .mapToDouble(j -> s[j])
                         .max()
                         .getAsDouble();
 
-                colDrop = xjMutation.stream()
+                colDrop = fsMutation.stream()
                         .filter(j -> s[j] == maxScore)
                         .boxed()
                         .map(j -> new Tuple2<>(j, timestamp[j]))
@@ -76,18 +76,18 @@ public class RowWeightedMutation {
                         .map(Tuple2::getT1)
                         .toList().get(0);
 
-                updateSolutionDrop(colDrop, xjMutation);
-                uncoveredRows = cUtils.findUncoveredRows(xjMutation);
+                updateSolutionDrop(colDrop, fsMutation);
+                uncoveredRows = cUtils.findUncoveredRows(fsMutation);
                 updateScore(colDrop, uncoveredRows);
             }
 
-            double maxScore1 = xjMutation.stream()
+            double maxScore1 = fsMutation.stream()
                     .boxed()
                     .mapToDouble(j -> s[j])
                     .max()
                     .getAsDouble();
 
-            int colDrop1 = xjMutation.stream()
+            int colDrop1 = fsMutation.stream()
                     .filter(j -> s[j] == maxScore1)
                     .boxed()
                     .map(j -> new Tuple2<>(j, timestamp[j]))
@@ -95,8 +95,8 @@ public class RowWeightedMutation {
                     .map(Tuple2::getT1)
                     .toList().get(0);
 
-            updateSolutionDrop(colDrop1, xjMutation);
-            uncoveredRows = cUtils.findUncoveredRows(xjMutation);
+            updateSolutionDrop(colDrop1, fsMutation);
+            uncoveredRows = cUtils.findUncoveredRows(fsMutation);
             updateScore(colDrop1, uncoveredRows);
 
             while (!uncoveredRows.isEmpty()) {
@@ -117,15 +117,15 @@ public class RowWeightedMutation {
                         .map(Tuple2::getT1)
                         .toList().get(0);
 
-                updateSolutionAdd(colAdd, xjMutation);
-                uncoveredRows = cUtils.findUncoveredRows(xjMutation);
-                updateScoreColumnsInSolution(xjMutation, colAdd);
+                updateSolutionAdd(colAdd, fsMutation);
+                uncoveredRows = cUtils.findUncoveredRows(fsMutation);
+                updateScoreColumnsInSolution(fsMutation, colAdd);
                 updateRowWeights(uncoveredRows);
-                updateScoreColumnsNotInSolution(xjMutation, colAdd);
+                updateScoreColumnsNotInSolution(fsMutation, colAdd);
             }
 
-            if (solutionImproved(fs, xjMutation)) {
-                fs = (BitSet) xjMutation.clone();
+            if (solutionImproved(fs, fsMutation)) {
+                fs = (BitSet) fsMutation.clone();
                 improved = true;
             }
         }
@@ -233,14 +233,6 @@ public class RowWeightedMutation {
     private boolean solutionImproved(BitSet currXj, BitSet newXj) {
         int currFiness = cUtils.calculateFitnessOne(currXj);
         int newFitness = cUtils.calculateFitnessOne(newXj);
-
-        if (currFiness > newFitness) {
-            System.out.println("Fitness improved => [" + currFiness + ", " + newFitness + "]");
-            if (newFitness < 156) {
-                System.out.println("BEST REACHED");
-            }
-        }
-
         return currFiness > newFitness;
     }
 }

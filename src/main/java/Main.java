@@ -17,25 +17,69 @@ import static main.java.variables.ScpVars.getBest;
 public class Main {
     static Logger logger = new Logger();
     static int seed;
-    static String[] instances = {
+    static String[] instances1 = {
+            "scpnre1",
+            "scpnre2",
+            "scpnre3",
+            "scpnre4",
+            "scpnre5",
+            "scpnrg1",
+            "scpnrg2",
+            "scpnrg3",
+            "scpnrg4",
+            "scpnrg5"
+    };
+    static String[] instances2 = {
             "scpnrf1",
             "scpnrf2",
             "scpnrf3",
             "scpnrf4",
             "scpnrf5",
+            "scpnrh1",
+            "scpnrh2",
+            "scpnrh3",
+            "scpnrh4",
+            "scpnrh5",
     };
+
+    static boolean multithread = false;
+    static int variant = 0;
+    static String[] instances = instances1;
+    static int instancesGroup = 1;
+
 
     private Main() {
     }
 
     public static void main(String[] args) {
+
+        setEnvironment();
+
         logger.log("Variant of the Artificial Bee Colony Algorithm ABC_SCP to solve the Set Covering Problem");
         logger.log("University of Cauca, 2023");
+        logger.log("Algorithm Variant: [" + variant + "]");
+        logger.log("Multi-thread: [ " + multithread + " ]");
 
-        runVABCSCPMonoThread();
-        // runVABCSCPMultiThread();
+        if (multithread) {
+            logger.log("Instances Group: [ " + (instancesGroup == 1 ? "I" : "II") + " ]");
+            runVABCSCPMultiThread();
+        } else {
+            runVABCSCPMonoThread();
+        }
 
         logger.log("Algorithm has finished!");
+    }
+
+    private static void setEnvironment() {
+        multithread = System.getenv().get("multithread") != null && Boolean.parseBoolean(System.getenv().get("multithread"));
+        variant = System.getenv().get("variant") != null ? Integer.parseInt(System.getenv().get("variant")) : 0;
+        instancesGroup = System.getenv().get("instances") != null ? Integer.parseInt(System.getenv().get("group")) : 1;
+
+        if (instancesGroup == 2) {
+            instances = instances2;
+        } else {
+            instances = instances1;
+        }
     }
 
     private static void runVABCSCPMonoThread() {
@@ -85,7 +129,7 @@ public class Main {
                                 .mapToObj(rIndex -> forkJoinPool.submit(() -> {
                                     seed = seed + 80;
                                     logger.setSEED(rIndex, seed);
-                                    return runVABCSCP(instance, rIndex, seed);
+                                    return runVABCSCP(instance, variant, rIndex, seed);
                                 })).toList();
 
                 forkJoinPool.shutdown();
@@ -106,8 +150,10 @@ public class Main {
         }
     }
 
-    private static Tuple3<Integer, Integer, BitSet> runVABCSCP(String instance, int runtimeIdx, int seed) {
+    private static Tuple3<Integer, Integer, BitSet> runVABCSCP(String instance, int variant, int runtimeIdx, int seed) {
         AbcVars vr = new AbcVars(seed);
+        vr.setAlgorithmVariant(variant);
+
         BeeColony bee = new BeeColony(vr);
         bee.initial();
         bee.memorizeBestSource();
