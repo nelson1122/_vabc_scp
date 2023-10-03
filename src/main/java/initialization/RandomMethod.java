@@ -26,11 +26,9 @@ public class RandomMethod {
                 .forEach(j -> {
                     double r = vr.getRANDOM().nextDouble();
                     double rNum = cUtils.roundDouble(r);
-
                     if (rNum < RATIO) {
                         fs.clear(j);
                     }
-
                 });
         return fs;
     }

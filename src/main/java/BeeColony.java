@@ -37,7 +37,7 @@ public class BeeColony {
         this.cUtils = new CommonUtils(vr);
         this.bUtils = new BeeUtils(vr);
         this.initialization = new Initialization(vr);
-        this.localSearch = new LocalSearch();
+        this.localSearch = new LocalSearch(vr);
     }
 
     public void initial() {
