@@ -43,7 +43,7 @@ public class Main {
     };
 
     static boolean multithread = false;
-    static int variant = 0;
+    static int variant = 2;
     static String[] instances = instances1;
     static int instancesGroup = 1;
 
@@ -52,7 +52,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
         setEnvironment();
 
         logger.log("Variant of the Artificial Bee Colony Algorithm ABC_SCP to solve the Set Covering Problem");
@@ -72,8 +71,8 @@ public class Main {
 
     private static void setEnvironment() {
         multithread = System.getenv().get("multithread") != null && Boolean.parseBoolean(System.getenv().get("multithread"));
-        variant = System.getenv().get("variant") != null ? Integer.parseInt(System.getenv().get("variant")) : 0;
-        instancesGroup = System.getenv().get("instances") != null ? Integer.parseInt(System.getenv().get("group")) : 1;
+        variant = System.getenv().get("variant") != null ? Integer.parseInt(System.getenv().get("variant")) : variant;
+        instancesGroup = System.getenv().get("instances") != null ? Integer.parseInt(System.getenv().get("group")) : instancesGroup;
 
         if (instancesGroup == 2) {
             instances = instances2;
@@ -87,6 +86,7 @@ public class Main {
         try {
             Problem.read("src/main/resources/" + instance + ".txt");
             var vr = new AbcVars(140);
+            vr.setAlgorithmVariant(variant);
             var bee = new BeeColony(vr);
             bee.initial();
             bee.memorizeBestSource();

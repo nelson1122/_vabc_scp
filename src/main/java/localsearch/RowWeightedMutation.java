@@ -233,6 +233,14 @@ public class RowWeightedMutation {
     private boolean solutionImproved(BitSet currXj, BitSet newXj) {
         int currFiness = cUtils.calculateFitnessOne(currXj);
         int newFitness = cUtils.calculateFitnessOne(newXj);
+
+        if (currFiness > newFitness) {
+            System.out.println("Fitness improved => [" + currFiness + ", " + newFitness + "]");
+            if (newFitness < 156) {
+                System.out.println("BEST REACHED");
+            }
+        }
+
         return currFiness > newFitness;
     }
 }

@@ -1,8 +1,5 @@
 package main.java.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Parameters {
     public static int RUNTIME = 10;
     public static int RC_SIZE = 6;
