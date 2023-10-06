@@ -5,7 +5,7 @@ import main.java.variables.AbcVars;
 import java.util.BitSet;
 import java.util.Comparator;
 
-import static main.java.config.Parameters.RC_SIZE;
+import static main.java.config.ParamsConfig.RC_SIZE;
 import static main.java.variables.ScpVars.getColumnsCoveringRow;
 import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRowsCoveredByColumn;

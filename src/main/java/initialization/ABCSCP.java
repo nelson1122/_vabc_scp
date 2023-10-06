@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static main.java.config.Parameters.RC_SIZE;
+import static main.java.config.ParamsConfig.RC_SIZE;
 import static main.java.variables.ScpVars.COLUMNS;
 import static main.java.variables.ScpVars.ROWS;
 import static main.java.variables.ScpVars.getColumnsCoveringRow;

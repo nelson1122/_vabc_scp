@@ -11,9 +11,9 @@ public class ScpVars {
     public static List<Integer> COSTS;
     public static List<BitSet> COLUMNSCOVERINGROW;
     public static List<BitSet> ROWSCOVEREDBYCOLUMN;
-    public static Map<String, Integer> BESTS;
-
+    public static Map<String, Integer> INSTANCES;
     public static BitSet ROWINTS;
+    public static List<Integer> COLUMNINTS;
 
     private ScpVars() {
     }
@@ -50,12 +50,22 @@ public class ScpVars {
         ScpVars.ROWSCOVEREDBYCOLUMN = ROWSCOVEREDBYCOLUMN;
     }
 
-    public static Map<String, Integer> getBESTS() {
-        return BESTS;
+    public static void setINSTANCES(Map<String, Integer> INSTANCES) {
+        ScpVars.INSTANCES = INSTANCES;
     }
 
-    public static void setBESTS(Map<String, Integer> BESTS) {
-        ScpVars.BESTS = BESTS;
+    public static Map<String, Integer> getINSTANCES() {
+        return ScpVars.INSTANCES;
+    }
+
+    public static void setCOLUMNINTS() {
+        ScpVars.COLUMNINTS = IntStream.range(0, COLUMNS)
+                .boxed()
+                .toList();
+    }
+
+    public static List<Integer> getCOLUMNINTS() {
+        return ScpVars.COLUMNINTS;
     }
 
     public static void setROWINTS() {
@@ -93,11 +103,11 @@ public class ScpVars {
         ROWSCOVEREDBYCOLUMN.add(bj);
     }
 
-    public static void setBest(String key, Integer value) {
-        BESTS.put(key, value);
+    public static void setInstance(String key, Integer value) {
+        INSTANCES.put(key, value);
     }
 
     public static Integer getBest(String key) {
-        return BESTS.get(key);
+        return INSTANCES.get(key);
     }
 }

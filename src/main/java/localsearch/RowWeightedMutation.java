@@ -7,11 +7,11 @@ import main.java.variables.AbcVars;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
-import java.util.stream.IntStream;
 
-import static main.java.config.Parameters.FOOD_NUMBER;
+import static main.java.config.ParamsConfig.FOOD_NUMBER;
 import static main.java.variables.ScpVars.COLUMNS;
 import static main.java.variables.ScpVars.ROWS;
+import static main.java.variables.ScpVars.getCOLUMNINTS;
 import static main.java.variables.ScpVars.getColumnsCoveringRow;
 import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRowsCoveredByColumn;
@@ -145,8 +145,7 @@ public class RowWeightedMutation {
     }
 
     private void calculateInitialPriority() {
-        IntStream.range(0, COLUMNS)
-                .boxed()
+        getCOLUMNINTS()
                 .forEach(j -> {
                     BitSet Bj = getRowsCoveredByColumn(j);
                     double priority = (double) Bj.cardinality() / getCost(j);
@@ -155,8 +154,7 @@ public class RowWeightedMutation {
     }
 
     private void calculateInitialScore(BitSet xj) {
-        IntStream.range(0, COLUMNS)
-                .boxed()
+        getCOLUMNINTS()
                 .forEach(j -> {
                     double score;
                     if (xj.get(j)) {
@@ -210,8 +208,8 @@ public class RowWeightedMutation {
     private void updateScoreColumnsNotInSolution(BitSet xj, int columnIndex) {
         BitSet Bj = getRowsCoveredByColumn(columnIndex);
 
-        IntStream.range(0, COLUMNS)
-                .boxed()
+        getCOLUMNINTS()
+                .stream()
                 .filter(j -> !xj.get(j))
                 .forEach(h -> {
                     BitSet Bh = getRowsCoveredByColumn(h);
@@ -234,12 +232,12 @@ public class RowWeightedMutation {
         int currFiness = cUtils.calculateFitnessOne(currXj);
         int newFitness = cUtils.calculateFitnessOne(newXj);
 
-        if (currFiness > newFitness) {
-            System.out.println("Fitness improved => [" + currFiness + ", " + newFitness + "]");
-            if (newFitness < 156) {
-                System.out.println("BEST REACHED");
-            }
-        }
+//        if (currFiness > newFitness) {
+//            System.out.println("Fitness improved => [" + currFiness + ", " + newFitness + "]");
+//            if (newFitness < 156) {
+//                System.out.println("BEST REACHED");
+//            }
+//        }
 
         return currFiness > newFitness;
     }

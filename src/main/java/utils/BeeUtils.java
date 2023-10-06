@@ -4,11 +4,12 @@ import main.java.variables.AbcVars;
 
 import java.util.BitSet;
 import java.util.List;
+import java.util.stream.IntStream;
 
-import static main.java.config.Parameters.COL_ADD_1;
-import static main.java.config.Parameters.COL_ADD_2;
-import static main.java.config.Parameters.COL_DROP_1;
-import static main.java.config.Parameters.COL_DROP_2;
+import static main.java.config.ParamsConfig.COL_ADD_1;
+import static main.java.config.ParamsConfig.COL_ADD_2;
+import static main.java.config.ParamsConfig.COL_DROP_1;
+import static main.java.config.ParamsConfig.COL_DROP_2;
 
 
 public class BeeUtils {
@@ -40,7 +41,8 @@ public class BeeUtils {
             }
         }
 
-        vr.getRANDOM().ints(0, dc)
+        IntStream.range(0, dc)
+                .map(num -> vr.getRANDOM().nextInt(dc))
                 .map(distinctColumns::get)
                 .distinct()
                 .limit(colAdd)
@@ -61,7 +63,8 @@ public class BeeUtils {
             colDrop = COL_DROP_2;
         }
 
-        vr.getRANDOM().ints(0, n)
+        IntStream.range(0, n)
+                .map(num -> vr.getRANDOM().nextInt(n))
                 .map(columns::get)
                 .distinct()
                 .limit(colDrop)

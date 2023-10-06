@@ -22,7 +22,7 @@ public class Initialization {
     }
 
     public BitSet createSolution() {
-        return switch (vr.getAlgorithmVariant()) {
+        return switch (vr.getInitializeMethod()) {
             case 0 -> this.abcscp.createSolution();
             case 1 -> this.randomMethod.createSolution();
             case 2 -> this.randomHeuristic.createSolution();

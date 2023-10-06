@@ -1,6 +1,6 @@
 package main.java.config;
 
-public class Parameters {
+public class ParamsConfig {
     public static int RUNTIME = 10;
     public static int RC_SIZE = 6;
     public static int EMPLOYED_BEES = 50;
@@ -13,5 +13,8 @@ public class Parameters {
     public static int COL_DROP_1 = 12;
     public static int COL_DROP_2 = 5;
     public static int LIMIT = 50;
+
+    private ParamsConfig() {
+    }
 
 }

@@ -20,15 +20,15 @@ public class AbcVars {
     private Double MEAN;
     private Random RANDOM;
     private long SEED;
+    private int initializeMethod;
 
-    private int algorithmVariant;
+    private int localSearchMethod;
 
     public AbcVars(long seed) {
         this.SEED = seed;
         this.RANDOM = new Random(seed);
         this.GLOBALMINS = new ArrayList<>();
         this.MEAN = 0d;
-        this.algorithmVariant = 0;
     }
 
     public List<BitSet> getFOODS() {
@@ -119,12 +119,20 @@ public class AbcVars {
         this.SEED = SEED;
     }
 
-    public int getAlgorithmVariant() {
-        return algorithmVariant;
+    public int getInitializeMethod() {
+        return initializeMethod;
     }
 
-    public void setAlgorithmVariant(int algorithmVariant) {
-        this.algorithmVariant = algorithmVariant;
+    public void setInitializeMethod(int initializeMethod) {
+        this.initializeMethod = initializeMethod;
+    }
+
+    public int getLocalSearchMethod() {
+        return localSearchMethod;
+    }
+
+    public void setLocalSearchMethod(int localSearchMethod) {
+        this.localSearchMethod = localSearchMethod;
     }
 
     // Custom Methods

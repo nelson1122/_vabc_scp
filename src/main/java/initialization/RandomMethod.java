@@ -11,7 +11,7 @@ import static main.java.variables.ScpVars.getCOLUMNS;
 public class RandomMethod {
     private final AbcVars vr;
     private final CommonUtils cUtils;
-    private static final double RATIO = 0.5;
+    private static final double RATIO = 0.9;
 
     public RandomMethod(AbcVars vr) {
         this.vr = vr;

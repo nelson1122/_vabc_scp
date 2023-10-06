@@ -6,7 +6,7 @@ import main.java.variables.ScpVars;
 import java.util.BitSet;
 import java.util.Optional;
 
-import static main.java.config.Parameters.FOOD_NUMBER;
+import static main.java.config.ParamsConfig.FOOD_NUMBER;
 import static main.java.variables.ScpVars.getROWINTS;
 
 

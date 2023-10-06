@@ -12,13 +12,12 @@ import java.util.BitSet;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static main.java.config.Parameters.EMPLOYED_BEES;
-import static main.java.config.Parameters.FOOD_NUMBER;
-import static main.java.config.Parameters.LIMIT;
-import static main.java.config.Parameters.ONLOOKER_BEES;
+import static main.java.config.ParamsConfig.EMPLOYED_BEES;
+import static main.java.config.ParamsConfig.FOOD_NUMBER;
+import static main.java.config.ParamsConfig.LIMIT;
+import static main.java.config.ParamsConfig.ONLOOKER_BEES;
 
 public class BeeColony {
     private AbcVars vr;
@@ -197,7 +196,7 @@ public class BeeColony {
             sumFitness += vr.getFitness(i);
         }
         for (int i = 0; i < FOOD_NUMBER; i++) {
-            double result = vr.getFitness(i) / sumFitness;
+            double result = (double) vr.getFitness(i) / sumFitness;
             vr.setProbability(i, result);
         }
 
@@ -206,7 +205,7 @@ public class BeeColony {
                         .boxed()
                         .map(p -> new Tuple2<>(p, vr.getProbability(p)))
                         .sorted(Comparator.comparing(Tuple2::getT2))
-                        .collect(Collectors.toList());
+                        .toList();
         vr.setPROBSRW(probSorted);
 
     }

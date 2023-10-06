@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
-import static main.java.config.Parameters.MAX_CYCLE;
-import static main.java.config.Parameters.RUNTIME;
+import static main.java.config.ParamsConfig.MAX_CYCLE;
+import static main.java.config.ParamsConfig.RUNTIME;
 
 public class Logger {
     public SimpleDateFormat FORMAT;

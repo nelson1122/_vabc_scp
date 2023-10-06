@@ -20,9 +20,10 @@ public class LocalSearch {
     }
 
     public BitSet apply(BitSet cfs) {
-        return switch (vr.getAlgorithmVariant()) {
-            case 0 -> this.abcscp.applyLocalSearch(cfs);
-            case 1, 2, 3 -> this.rowWeightedMutation.applyLocalSearch(cfs);
+        return switch (vr.getLocalSearchMethod()) {
+            case 0 -> cfs;
+            case 1 -> this.abcscp.applyLocalSearch(cfs);
+            case 2 -> this.rowWeightedMutation.applyLocalSearch(cfs);
             default -> throw new IllegalArgumentException("Local Search method is not valid");
         };
     }
