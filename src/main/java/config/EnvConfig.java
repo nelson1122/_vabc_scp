@@ -45,7 +45,7 @@ public class EnvConfig {
         initialize = System.getenv().get("initialize") != null ?
                 Integer.parseInt(System.getenv().get("initialize")) : initialize;
         localsearch = System.getenv().get("localsearch") != null ?
-                Integer.parseInt(System.getenv().get("localsearch")) : initialize;
+                Integer.parseInt(System.getenv().get("localsearch")) : localsearch;
 
         setInitializeName();
         setLocalSearchName();

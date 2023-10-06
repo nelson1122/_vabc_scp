@@ -42,7 +42,7 @@ public class Main {
     }
 
     private static void runVABCSCPMonoThread() {
-        String instance = "scpnrf5";
+        String instance = "scpnrg3";
         try {
             Problem.read("src/main/resources/" + instance + ".txt");
 
