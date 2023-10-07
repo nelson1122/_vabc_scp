@@ -18,8 +18,7 @@ public class CommonUtils {
     }
 
     public int randomNumber(int high) {
-        int low = 0;
-        return vr.getRANDOM().nextInt((high - low)) + low;
+        return vr.getRANDOM().nextInt(high);
     }
 
     public double roundDouble(double value) {

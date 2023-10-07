@@ -3,7 +3,9 @@ package main.java.utils;
 import main.java.variables.AbcVars;
 
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static main.java.config.ParamsConfig.COL_ADD_1;
@@ -23,7 +25,8 @@ public class BeeUtils {
 
     public void addColumns(BitSet cfs, BitSet rfs) {
         BitSet dCols = cUtils.findDistinctColumns(cfs, rfs);
-        List<Integer> distinctColumns = dCols.stream().boxed().toList();
+        List<Integer> distinctColumns = dCols.stream().boxed().collect(Collectors.toList());
+        Collections.shuffle(distinctColumns);
 
         int n = cfs.cardinality();
         int dc = dCols.cardinality();
@@ -52,7 +55,8 @@ public class BeeUtils {
 
     public void dropColumns(BitSet cfs) {
         int n = cfs.cardinality();
-        List<Integer> columns = cfs.stream().boxed().toList();
+        List<Integer> columns = cfs.stream().boxed().collect(Collectors.toList());
+        Collections.shuffle(columns);
         int colDrop;
 
         if (n < 5) {

@@ -4,8 +4,8 @@ import main.java.utils.CommonUtils;
 import main.java.variables.AbcVars;
 
 import java.util.BitSet;
-import java.util.stream.IntStream;
 
+import static main.java.variables.ScpVars.getCOLUMNINTS;
 import static main.java.variables.ScpVars.getCOLUMNS;
 
 public class RandomMethod {
@@ -21,8 +21,7 @@ public class RandomMethod {
     public BitSet createSolution() {
         BitSet fs = new BitSet();
         fs.set(0, getCOLUMNS(), true);
-        IntStream.range(0, getCOLUMNS())
-                .boxed()
+        getCOLUMNINTS()
                 .forEach(j -> {
                     double r = vr.getRANDOM().nextDouble();
                     double rNum = cUtils.roundDouble(r);

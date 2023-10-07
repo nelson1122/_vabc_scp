@@ -27,7 +27,7 @@ public class RepairUtils {
                     BitSet ur = (BitSet) uncoveredRows.clone();
                     ur.and(bj);
                     double ratio = (double) getCost(j) / ur.cardinality();
-                    return new Tuple2<>(j, cUtils.roundDouble(ratio));
+                    return new Tuple2<>(j, ratio);
                 })
                 .sorted(Comparator.comparing(Tuple2::getT2))
                 .map(Tuple2::getT1)

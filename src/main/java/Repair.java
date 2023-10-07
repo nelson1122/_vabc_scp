@@ -38,7 +38,7 @@ public class Repair {
             int columnIndex;
 
             double r = (vr.getRANDOM().nextDouble() * 100.0) / 100.0;
-            double rNum = Math.round(r * 1000) / 1000.0;
+            double rNum = cUtils.roundDouble(r);
 
             if (rNum <= Pa) {
                 columnIndex = rUtils.getColumnMinRatio(uncoveredRows, indexRowUncovered);
@@ -58,7 +58,7 @@ public class Repair {
                 .map(j -> {
                     BitSet rowsCovered = getRowsCoveredByColumn(j);
                     double ratio = (double) getCost(j) / rowsCovered.cardinality();
-                    return new Tuple2<>(j, cUtils.roundDouble(ratio));
+                    return new Tuple2<>(j, ratio);
                 })
                 .sorted(Collections.reverseOrder(Comparator.comparing(Tuple2::getT2)))
                 .map(Tuple2::getT1)

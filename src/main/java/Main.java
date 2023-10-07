@@ -6,6 +6,7 @@ import main.java.utils.Tuple3;
 import main.java.variables.AbcVars;
 
 import java.util.BitSet;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
@@ -28,8 +29,7 @@ public class Main {
 
         logger.log("Variant of the Artificial Bee Colony Algorithm ABC_SCP to solve the Set Covering Problem");
         logger.log("University of Cauca, 2023");
-        logger.log("Initialize Method: [ " + EnvConfig.getInitializeName() + " ]");
-        logger.log("LocalSearch Method: [ " + EnvConfig.getLocalSearchName() + " ]");
+        logger.log("Initialize Method: [ " + EnvConfig.getInitializeName() + " ] - LocalSearch Method: [ " + EnvConfig.getLocalSearchName() + " ]");
         logger.log("Multi-thread: [ " + EnvConfig.isMultithread() + " ]");
 
         if (EnvConfig.isMultithread()) {
@@ -42,7 +42,7 @@ public class Main {
     }
 
     private static void runVABCSCPMonoThread() {
-        String instance = "scpnrg3";
+        String instance = "scpnrh1";
         try {
             Problem.read("src/main/resources/" + instance + ".txt");
 
@@ -60,7 +60,7 @@ public class Main {
                 bee.memorizeBestSource();
                 bee.sendScoutBees();
                 logger.addProgress(0);
-                logger.setGlobalMin(0, vr.getGLOBALMIN());
+                logger.setGlobalMin(0, new Date(), vr.getGLOBALMIN());
                 logger.printLog(0);
 
                 // validate best
@@ -107,7 +107,8 @@ public class Main {
                         .ifPresent(average -> logger.log("Runs average: " + average + "\n"));
 
             } catch (Exception ex) {
-                logger.log("Error reading file");
+                logger.log("Error processing instance..");
+                ex.printStackTrace();
                 Thread.currentThread().interrupt();
             }
         });
@@ -128,7 +129,7 @@ public class Main {
             bee.memorizeBestSource();
             bee.sendScoutBees();
             logger.addProgress(runtime);
-            logger.setGlobalMin(runtime, vr.getGLOBALMIN());
+            logger.setGlobalMin(runtime, new Date(), vr.getGLOBALMIN());
 
             // validate best
             int globalMin = vr.getGLOBALMIN();

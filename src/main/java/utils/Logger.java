@@ -13,6 +13,8 @@ import static main.java.config.ParamsConfig.RUNTIME;
 
 public class Logger {
     public SimpleDateFormat FORMAT;
+
+    public Date[] dates;
     private int[] RUNS;
     private int[] GLOBALMINS;
     private int[] SEEDS;
@@ -22,13 +24,17 @@ public class Logger {
         RUNS = new int[RUNTIME];
         GLOBALMINS = new int[RUNTIME];
         SEEDS = new int[RUNTIME];
+        dates = new Date[]{new Date(), new Date(), new Date(), new Date(),
+                new Date(), new Date(), new Date(),
+                new Date(), new Date(), new Date()};
     }
 
     public void addProgress(int run) {
         this.RUNS[run]++;
     }
 
-    public void setGlobalMin(int run, int value) {
+    public void setGlobalMin(int run, Date date, int value) {
+        this.dates[run] = date;
         this.GLOBALMINS[run] = value;
     }
 
@@ -87,7 +93,7 @@ public class Logger {
                 progress = progress.concat("·");
             }
             double progDecimal = ((double) RUNS[x] / MAX_CYCLE) * 100.0;
-            progress = FORMAT.format(new Date()) + " [ " +
+            progress = FORMAT.format(dates[x]) + " [ " +
                     "run " + x + " | " +
                     "seed: " + SEEDS[x] + " | " +
                     "iter: " + RUNS[x] + " | " +

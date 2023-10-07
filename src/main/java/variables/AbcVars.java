@@ -8,6 +8,8 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
+import static main.java.utils.RandomUtil.threadLocalRandom;
+
 public class AbcVars {
     private List<BitSet> FOODS;
     private BitSet GLOBALPARAMS;
@@ -26,7 +28,7 @@ public class AbcVars {
 
     public AbcVars(long seed) {
         this.SEED = seed;
-        this.RANDOM = new Random(seed);
+        this.RANDOM = threadLocalRandom(seed);
         this.GLOBALMINS = new ArrayList<>();
         this.MEAN = 0d;
     }

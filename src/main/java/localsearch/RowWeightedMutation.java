@@ -158,9 +158,9 @@ public class RowWeightedMutation {
                 .forEach(j -> {
                     double score;
                     if (xj.get(j)) {
-                        score = (-1) * Math.round(p[j] * 100.0) / 100.0;
+                        score = (-1) * p[j];
                     } else {
-                        score = Math.round(p[j] * 100.0) / 100.0;
+                        score = p[j];
                     }
                     s[j] = score;
                 });
@@ -174,7 +174,6 @@ public class RowWeightedMutation {
                         .boxed()
                         .mapToDouble(j -> (double) w[j] / getCost(columnIndex))
                         .sum();
-        score = Math.round(score * 100.0) / 100.0;
         s[columnIndex] = score;
     }
 
@@ -196,7 +195,6 @@ public class RowWeightedMutation {
 
                     double score = s[h] + sum;
 
-                    score = Math.round(score * 100.0) / 100.0;
                     s[h] = score;
                 });
     }
@@ -222,7 +220,6 @@ public class RowWeightedMutation {
 
                     double score = s[h] - sum;
 
-                    score = Math.round(score * 100.0) / 100.0;
                     s[h] = score;
                 });
     }
