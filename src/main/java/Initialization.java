@@ -11,7 +11,6 @@ public class Initialization {
     private AbcVars vr;
     private final ABCSCP abcscp;
     private final RandomMethod randomMethod;
-
     private final RandomHeuristic randomHeuristic;
 
     public Initialization(AbcVars vr) {

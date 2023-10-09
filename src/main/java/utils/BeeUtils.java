@@ -25,8 +25,7 @@ public class BeeUtils {
 
     public void addColumns(BitSet cfs, BitSet rfs) {
         BitSet dCols = cUtils.findDistinctColumns(cfs, rfs);
-        List<Integer> distinctColumns = dCols.stream().boxed().collect(Collectors.toList());
-        Collections.shuffle(distinctColumns);
+        List<Integer> distinctColumns = dCols.stream().boxed().toList();
 
         int n = cfs.cardinality();
         int dc = dCols.cardinality();
@@ -55,8 +54,8 @@ public class BeeUtils {
 
     public void dropColumns(BitSet cfs) {
         int n = cfs.cardinality();
-        List<Integer> columns = cfs.stream().boxed().collect(Collectors.toList());
-        Collections.shuffle(columns);
+        List<Integer> columns = cfs.stream().boxed().toList();
+
         int colDrop;
 
         if (n < 5) {

@@ -37,7 +37,7 @@ public class Repair {
             int indexRowUncovered = uncoveredRowsList.get(0);
             int columnIndex;
 
-            double r = (vr.getRANDOM().nextDouble() * 100.0) / 100.0;
+            double r = vr.getRANDOM().nextDouble();
             double rNum = cUtils.roundDouble(r);
 
             if (rNum <= Pa) {
