@@ -57,6 +57,7 @@ public class EnvConfig {
         names.put(0, "ABCSCP");
         names.put(1, "RANDOM");
         names.put(2, "RHEURISTIC");
+        names.put(3, "ITERCONSTRUC");
         initializeName = names.get(initialize);
     }
 

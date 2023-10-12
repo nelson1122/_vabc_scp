@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import static main.java.config.ParamsConfig.FOOD_NUMBER;
 import static main.java.variables.ScpVars.getROWINTS;
+import static main.java.variables.ScpVars.getROWS;
 
 
 public class CommonUtils {
@@ -70,7 +71,7 @@ public class CommonUtils {
             rows.andNot(optCoveredRows.get());
             return rows;
         }
-        return new BitSet();
+        return getROWINTS();
     }
 
     public BitSet getColumnsRandomFoodSource(BitSet cfs, int i) {

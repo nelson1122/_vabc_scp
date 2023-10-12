@@ -42,7 +42,7 @@ public class Main {
     }
 
     private static void runVABCSCPMonoThread() {
-        String instance = "scpnrh1";
+        String instance = "scpnrh2";
         try {
             Problem.read("src/main/resources/" + instance + ".txt");
 
@@ -64,7 +64,7 @@ public class Main {
                 logger.printLog(0);
 
                 // validate best
-                int instanceBest = getBest(instance);
+                int instanceBest = 63;
                 int globalMin = vr.getGLOBALMIN();
 
                 if (instanceBest == globalMin) {
@@ -73,6 +73,7 @@ public class Main {
             }
             logger.printSolution(vr.getGLOBALPARAMS());
         } catch (Exception ex) {
+            ex.printStackTrace();
             logger.log("Error reading file");
         }
     }
