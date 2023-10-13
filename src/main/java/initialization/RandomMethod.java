@@ -24,8 +24,8 @@ public class RandomMethod {
         getCOLUMNINTS()
                 .forEach(j -> {
                     double r = vr.getRANDOM().nextDouble();
-                    double rNum = cUtils.roundDouble(r);
-                    if (rNum < RATIO) {
+//                    double rNum = cUtils.roundDouble(r);
+                    if (r < RATIO) {
                         fs.clear(j);
                     }
                 });

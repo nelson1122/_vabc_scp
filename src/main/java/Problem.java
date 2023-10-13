@@ -10,16 +10,20 @@ import java.util.Scanner;
 
 import static main.java.variables.ScpVars.getCOLUMNS;
 import static main.java.variables.ScpVars.getColumnsCoveringRow;
+import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getROWS;
+import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 import static main.java.variables.ScpVars.setCOLUMNINTS;
 import static main.java.variables.ScpVars.setCOLUMNS;
 import static main.java.variables.ScpVars.setCOLUMNSCOVERINGROW;
 import static main.java.variables.ScpVars.setCOSTS;
 import static main.java.variables.ScpVars.setColumnsCoveringRow;
 import static main.java.variables.ScpVars.setCost;
+import static main.java.variables.ScpVars.setRATIOCOSTROWSCOVERED;
 import static main.java.variables.ScpVars.setROWINTS;
 import static main.java.variables.ScpVars.setROWS;
 import static main.java.variables.ScpVars.setROWSCOVEREDBYCOLUMN;
+import static main.java.variables.ScpVars.setRatioCostRowsCovered;
 import static main.java.variables.ScpVars.setRowsCoveredByColumn;
 
 
@@ -44,6 +48,7 @@ public class Problem {
 
         setCOLUMNSCOVERINGROW(new ArrayList<>());
         setROWSCOVEREDBYCOLUMN(new ArrayList<>());
+        setRATIOCOSTROWSCOVERED(new double[getCOLUMNS()]);
 
         for (int j = 0; j < getCOLUMNS(); j++) {
             setCost(scanner.nextInt());
@@ -68,6 +73,13 @@ public class Problem {
                 }
             }
             setRowsCoveredByColumn(bj);
+        }
+
+        // calculate ratio cost(j) / rowscoveredbycolumn(j)
+        for (int j = 0; j < getCOLUMNS(); j++) {
+            BitSet bj = getRowsCoveredByColumn(j);
+            double ratio = (double) getCost(j) / bj.cardinality();
+            setRatioCostRowsCovered(j, ratio);
         }
 
         scanner.close();

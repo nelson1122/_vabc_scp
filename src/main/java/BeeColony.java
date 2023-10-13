@@ -4,11 +4,13 @@ package main.java;
 import main.java.utils.BeeUtils;
 import main.java.utils.CommonUtils;
 import main.java.utils.Tuple2;
+import main.java.utils.Tuple3;
 import main.java.variables.AbcVars;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -94,12 +96,12 @@ public class BeeColony {
                 .boxed()
                 .forEach(t -> {
                     double r = vr.getRANDOM().nextDouble();
-                    double rNum = cUtils.roundDouble(r);
+//                    double rNum = cUtils.roundDouble(r);
 
                     double cumulativeProbability = 0.0;
                     for (int fs = 0; fs < FOOD_NUMBER; fs++) {
                         cumulativeProbability += vr.getProbabilityValue(fs);
-                        if (rNum <= cumulativeProbability) {
+                        if (r < cumulativeProbability) {
                             foodNumber.set(vr.getProbabilityIndex(fs));
                             break;
                         }
@@ -203,7 +205,7 @@ public class BeeColony {
                 IntStream.range(0, FOOD_NUMBER)
                         .boxed()
                         .map(p -> new Tuple2<>(p, vr.getProbability(p)))
-                        .sorted(Comparator.comparing(Tuple2::getT2))
+                        .sorted(Collections.reverseOrder(Comparator.comparing(Tuple2::getT2)))
                         .toList();
         vr.setPROBSRW(probSorted);
 

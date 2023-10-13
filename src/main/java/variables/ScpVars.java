@@ -15,6 +15,8 @@ public class ScpVars {
     public static BitSet ROWINTS;
     public static List<Integer> COLUMNINTS;
 
+    public static double[] RATIOCOSTROWSCOVERED;
+
     private ScpVars() {
     }
 
@@ -78,6 +80,14 @@ public class ScpVars {
         return (BitSet) ROWINTS.clone();
     }
 
+    public static double[] getRATIOCOSTROWSCOVERED() {
+        return RATIOCOSTROWSCOVERED;
+    }
+
+    public static void setRATIOCOSTROWSCOVERED(double[] RATIOCOSTROWSCOVERED) {
+        ScpVars.RATIOCOSTROWSCOVERED = RATIOCOSTROWSCOVERED;
+    }
+
     // Custom methods
     public static void setCost(int value) {
         COSTS.add(value);
@@ -109,5 +119,13 @@ public class ScpVars {
 
     public static Integer getBest(String key) {
         return INSTANCES.get(key);
+    }
+
+    public static void setRatioCostRowsCovered(int j, double value) {
+        ScpVars.RATIOCOSTROWSCOVERED[j] = value;
+    }
+
+    public static double getRatioCostRowsCovered(int j) {
+        return ScpVars.RATIOCOSTROWSCOVERED[j];
     }
 }

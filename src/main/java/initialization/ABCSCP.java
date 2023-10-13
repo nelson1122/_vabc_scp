@@ -1,6 +1,7 @@
 package main.java.initialization;
 
 import main.java.utils.CommonUtils;
+import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 
 import java.util.BitSet;
@@ -12,6 +13,7 @@ import static main.java.config.ParamsConfig.RC_SIZE;
 import static main.java.variables.ScpVars.COLUMNS;
 import static main.java.variables.ScpVars.ROWS;
 import static main.java.variables.ScpVars.getColumnsCoveringRow;
+import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 
 
@@ -36,6 +38,9 @@ public class ABCSCP {
     private void generateSolution(BitSet fs, int[] u) {
         IntStream.range(0, ROWS)
                 .boxed()
+                .map(j -> new Tuple2<>(j, getCost(j)))
+                .sorted(Comparator.comparing(Tuple2::getT2))
+                .map(Tuple2::getT1)
                 .forEach(i -> {
                     BitSet ai = getColumnsCoveringRow(i);
                     int randomRC = cUtils.randomNumber(RC_SIZE);

@@ -11,8 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static main.java.config.ParamsConfig.Pa;
-import static main.java.variables.ScpVars.getCost;
-import static main.java.variables.ScpVars.getRowsCoveredByColumn;
+import static main.java.variables.ScpVars.getRatioCostRowsCovered;
 
 
 public class Repair {
@@ -38,9 +37,9 @@ public class Repair {
             int columnIndex;
 
             double r = vr.getRANDOM().nextDouble();
-            double rNum = cUtils.roundDouble(r);
+//            double rNum = cUtils.roundDouble(r);
 
-            if (rNum <= Pa) {
+            if (r < Pa) {
                 columnIndex = rUtils.getColumnMinRatio(uncoveredRows, indexRowUncovered);
             } else {
                 columnIndex = rUtils.selectRandomColumnFromRCL(indexRowUncovered);
@@ -55,11 +54,7 @@ public class Repair {
         BitSet cfsCopy = (BitSet) cfs.clone();
         cfsCopy.stream()
                 .boxed()
-                .map(j -> {
-                    BitSet rowsCovered = getRowsCoveredByColumn(j);
-                    double ratio = (double) getCost(j) / rowsCovered.cardinality();
-                    return new Tuple2<>(j, ratio);
-                })
+                .map(j -> new Tuple2<>(j, getRatioCostRowsCovered(j)))
                 .sorted(Collections.reverseOrder(Comparator.comparing(Tuple2::getT2)))
                 .map(Tuple2::getT1)
                 .forEach(columnIndex -> {
