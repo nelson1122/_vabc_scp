@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static main.java.variables.ScpVars.COLUMNS;
-import static main.java.variables.ScpVars.ROWS;
+import static main.java.variables.ScpVars.getCOLUMNS;
 import static main.java.variables.ScpVars.getColumnsCoveringRow;
 import static main.java.variables.ScpVars.getCost;
+import static main.java.variables.ScpVars.getROWS;
 import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 
 public class RandomHeuristic {
@@ -25,8 +25,8 @@ public class RandomHeuristic {
     }
 
     public BitSet createSolution() {
-        BitSet fs = new BitSet(COLUMNS);
-        int randomColumn = cUtils.randomNumber(COLUMNS);
+        BitSet fs = new BitSet();
+        int randomColumn = cUtils.randomNumber(getCOLUMNS());
         fs.set(randomColumn);
 
         BitSet uncoveredRows = cUtils.findUncoveredRows(fs);
@@ -47,8 +47,8 @@ public class RandomHeuristic {
                     int Li = getColumnsCoveringRow(i).size();
                     return new Tuple2<>(i, 1.0 / Li);
                 })
-                .sorted(Collections.reverseOrder(Comparator.comparingDouble(Tuple2::getT2)))
-                //.sorted(Comparator.comparingDouble(Tuple2::getT2))
+                //.sorted(Collections.reverseOrder(Comparator.comparingDouble(Tuple2::getT2)))
+                .sorted(Comparator.comparingDouble(Tuple2::getT2))
                 .limit(10)
                 .map(Tuple2::getT1)
                 .toList();
@@ -61,7 +61,7 @@ public class RandomHeuristic {
                 .map(j -> {
                     BitSet Mj = getRowsCoveredByColumn(j);
                     Mj.and(uncoveredRows);
-                    return new Tuple2<>(j, getCost(j) * 1.0 / Mj.cardinality());
+                    return new Tuple2<>(j, (double) getCost(j) / Mj.cardinality());
                 })
                 .sorted(Comparator.comparingDouble(Tuple2::getT2))
                 .limit(5)
@@ -73,7 +73,7 @@ public class RandomHeuristic {
     }
 
     private void removeRepeatedColumns(BitSet fs) {
-        int[] u = new int[ROWS];
+        int[] u = new int[getROWS()];
         fs.stream()
                 .boxed()
                 .forEach(j -> {

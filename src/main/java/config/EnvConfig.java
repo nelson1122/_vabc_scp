@@ -66,11 +66,13 @@ public class EnvConfig {
         names.put(0, "NLS");
         names.put(1, "ABCSCP");
         names.put(2, "RWMLS");
+        names.put(3, "ITERLS");
         localSearchName = names.get(localsearch);
     }
 
     private static void setINSTANCES() {
         ScpVars.setINSTANCES(new HashMap<>());
+        setInstance("scp41", 429);
 /*
         setInstance("scpnre1", 29);
         setInstance("scpnre2", 30);

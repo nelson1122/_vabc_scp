@@ -64,7 +64,7 @@ public class Main {
                 logger.printLog(0);
 
                 // validate best
-                int instanceBest = 63;
+                int instanceBest = getBest(instance);
                 int globalMin = vr.getGLOBALMIN();
 
                 if (instanceBest == globalMin) {
@@ -73,8 +73,7 @@ public class Main {
             }
             logger.printSolution(vr.getGLOBALPARAMS());
         } catch (Exception ex) {
-            ex.printStackTrace();
-            logger.log("Error reading file");
+            logger.log("Error reading file: " + instance);
         }
     }
 
