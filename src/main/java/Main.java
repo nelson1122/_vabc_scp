@@ -8,6 +8,7 @@ import main.java.variables.AbcVars;
 import java.util.BitSet;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.stream.IntStream;
@@ -29,8 +30,9 @@ public class Main {
 
         logger.log("Variant of the Artificial Bee Colony Algorithm ABC_SCP to solve the Set Covering Problem");
         logger.log("University of Cauca, 2023");
-        logger.log("Initialize Method: [ " + EnvConfig.getInitializeName() + " ] - LocalSearch Method: [ " + EnvConfig.getLocalSearchName() + " ]");
-        logger.log("Multi-thread: [ " + EnvConfig.isMultithread() + " ]");
+        logger.log("Initialize Method:  " + EnvConfig.getInitializeName() + ". " +
+                "LocalSearch Method: " + EnvConfig.getLocalSearchName() + ". " +
+                "Multi-thread: " + EnvConfig.isMultithread() + ".");
 
         if (EnvConfig.isMultithread()) {
             runVABCSCPMultiThread();
@@ -42,45 +44,60 @@ public class Main {
     }
 
     private static void runVABCSCPMonoThread() {
-        String instance = "scpnrg3";
-        try {
-            Problem.read("src/main/resources/" + instance + ".txt");
+        TreeMap<String, Integer> instances = new TreeMap<>(getINSTANCES());
+        instances.forEach((instance, best) -> {
+            int seed = 500;
+            try {
+                Problem.read(EnvConfig.getResourcePath(instance));
+                logger.printInitialLog();
 
-            var vr = new AbcVars(450);
-            vr.setInitializeMethod(EnvConfig.getInitialize());
-            vr.setLocalSearchMethod(EnvConfig.getLocalsearch());
+                for (int run = 0; run < RUNTIME; run++) {
+                    seed += 500;
+                    logger.setSeed(run, seed);
+                    logger.setDateInit(run);
 
-            var bee = new BeeColony(vr);
-            bee.initial();
-            bee.memorizeBestSource();
-            for (int iter = 0; iter < MAX_CYCLE; iter++) {
-                bee.sendEmployedBees();
-                bee.calculateProbabilitiesOne();
-                bee.sendOnlookerBees();
-                bee.memorizeBestSource();
-                bee.sendScoutBees();
-                logger.addProgress(0);
-                logger.setGlobalMin(0, new Date(), vr.getGLOBALMIN());
-                logger.printLog(0);
+                    var vr = new AbcVars(seed);
+                    vr.setInitializeMethod(EnvConfig.getInitialize());
+                    vr.setLocalSearchMethod(EnvConfig.getLocalsearch());
 
-                // validate best
-                int instanceBest = getBest(instance);
-                int globalMin = vr.getGLOBALMIN();
+                    var bee = new BeeColony(vr);
+                    bee.initial();
+                    bee.memorizeBestSource();
 
-                if (instanceBest == globalMin) {
-                    break;
+                    for (int iter = 0; iter < MAX_CYCLE; iter++) {
+                        bee.sendEmployedBees();
+                        bee.calculateProbabilitiesOne();
+                        bee.sendOnlookerBees();
+                        bee.memorizeBestSource();
+                        bee.sendScoutBees();
+                        logger.addProgress(run);
+                        logger.setGlobalMin(run, new Date(), vr.getGLOBALMIN());
+                        logger.printLog();
+
+                        // validate best
+                        int globalMin = vr.getGLOBALMIN();
+
+                        if (best == globalMin) {
+                            break;
+                        }
+                    }
+
+                    logger.addGlobalParams(run, vr.getGLOBALPARAMS());
                 }
+                logger.printSolutions();
+            } catch (Exception ex) {
+                logger.log("Error reading file: " + instance);
             }
-            logger.printSolution(vr.getGLOBALPARAMS());
-        } catch (Exception ex) {
-            logger.log("Error reading file: " + instance);
-        }
+
+        });
+
     }
 
     public static void runVABCSCPMultiThread() {
-        getINSTANCES().forEach((instance, best) -> {
+        TreeMap<String, Integer> instances = new TreeMap<>(getINSTANCES());
+        instances.forEach((instance, best) -> {
             try {
-                Problem.read("main/resources/" + instance + ".txt");
+                Problem.read(EnvConfig.getResourcePath(instance));
                 logger.log("Problem processing [" + instance + "] has started!");
                 logger.log();
                 seed = 50;
