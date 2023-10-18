@@ -42,7 +42,7 @@ public class Main {
     }
 
     private static void runVABCSCPMonoThread() {
-        String instance = "scpnrh2";
+        String instance = "scpnrg3";
         try {
             Problem.read("src/main/resources/" + instance + ".txt");
 
@@ -91,7 +91,7 @@ public class Main {
                                 .sorted()
                                 .mapToObj(rIndex -> forkJoinPool.submit(() -> {
                                     seed = seed + 80;
-                                    logger.setSEED(rIndex, seed);
+                                    logger.setSeed(rIndex, seed);
                                     return runVABCSCP(rIndex, seed, best);
                                 })).toList();
 
@@ -120,9 +120,10 @@ public class Main {
         vr.setLocalSearchMethod(EnvConfig.getLocalsearch());
 
         BeeColony bee = new BeeColony(vr);
+        logger.setDateInit(runtime);
         bee.initial();
         bee.memorizeBestSource();
-        for (int iter = 0; iter < MAX_CYCLE; iter++) {
+        for (int iter = 1; iter <= MAX_CYCLE; iter++) {
             bee.sendEmployedBees();
             bee.calculateProbabilitiesOne();
             bee.sendOnlookerBees();

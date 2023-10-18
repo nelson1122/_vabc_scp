@@ -2,19 +2,21 @@ package main.java.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static main.java.config.ParamsConfig.MAX_CYCLE;
 import static main.java.config.ParamsConfig.RUNTIME;
 
 public class Logger {
     public SimpleDateFormat FORMAT;
-
-    public Date[] dates;
+    public Date[] DATEINIT;
+    public Date[] DATEPROG;
     private int[] RUNS;
     private int[] GLOBALMINS;
     private int[] SEEDS;
@@ -24,7 +26,12 @@ public class Logger {
         RUNS = new int[RUNTIME];
         GLOBALMINS = new int[RUNTIME];
         SEEDS = new int[RUNTIME];
-        dates = new Date[]{new Date(), new Date(), new Date(), new Date(),
+
+        DATEINIT = new Date[]{new Date(), new Date(), new Date(), new Date(),
+                new Date(), new Date(), new Date(),
+                new Date(), new Date(), new Date()};
+
+        DATEPROG = new Date[]{new Date(), new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date()};
     }
@@ -34,12 +41,16 @@ public class Logger {
     }
 
     public void setGlobalMin(int run, Date date, int value) {
-        this.dates[run] = date;
+        this.DATEPROG[run] = date;
         this.GLOBALMINS[run] = value;
     }
 
-    public void setSEED(int run, int value) {
+    public void setSeed(int run, int value) {
         this.SEEDS[run] = value;
+    }
+
+    public void setDateInit(int runtime) {
+        DATEINIT[runtime] = new Date();
     }
 
     public void log(Tuple3<Integer, Integer, BitSet> result) {
@@ -72,15 +83,15 @@ public class Logger {
     public void log() {
         RUNS = new int[RUNTIME];
         GLOBALMINS = new int[RUNTIME];
-        List<String> logs = buildLog();
+        List<String> logs = buildLog2();
         System.out.print(String.join("", logs));
     }
 
     public void start(ForkJoinPool forkJoinPool) throws InterruptedException {
         while (!forkJoinPool.isTerminated()) {
             Thread.sleep(2000);
-            List<String> logs = buildLog();
-            System.out.print(String.format("\033[%dA", 10));
+            List<String> logs = buildLog2();
+            System.out.print(String.format("\033[%dA", 12));
             System.out.print(String.join("", logs));
         }
     }
@@ -93,7 +104,7 @@ public class Logger {
                 progress = progress.concat("·");
             }
             double progDecimal = ((double) RUNS[x] / MAX_CYCLE) * 100.0;
-            progress = FORMAT.format(dates[x]) + " [ " +
+            progress = FORMAT.format(DATEPROG[x]) + " [ " +
                     "run " + x + " | " +
                     "seed: " + SEEDS[x] + " | " +
                     "iter: " + RUNS[x] + " | " +
@@ -136,5 +147,66 @@ public class Logger {
                 progress.concat(" " + Math.round(progDecimal * 100) / 100.0 + "%");
         System.out.print(String.format("\033[%dA", 0));
         System.out.println(progress);
+    }
+
+
+    public List<String> buildLog2() {
+        List<String> logs = new ArrayList<>();
+        String header = String.format("                        | run   | seed  | iter  | min   | ttb        | prog  %n");
+        logs.add(header);
+
+        for (int runtime = 0; runtime < RUNS.length; runtime++) {
+            double progress = ((double) RUNS[runtime] / MAX_CYCLE) * 100.0;
+            double progressRound = Math.round(progress * 100) / 100.0;
+
+            String progressLine = "";
+            for (int y = 0; y < RUNS[runtime] / 10; y++) {
+                progressLine = progressLine.concat("·");
+            }
+
+            String line = String.format("%-20s | %-5d | %-5d | %-5d | %-5d | %-10d | %-5s %n",
+                    FORMAT.format(DATEPROG[runtime]),
+                    runtime,
+                    SEEDS[runtime],
+                    RUNS[runtime],
+                    GLOBALMINS[runtime],
+                    secondBetweenDates(runtime),
+                    progressLine + " " + progressRound + " %");
+            logs.add(line);
+        }
+
+        String resultLine = String.format("                                                | %-5s | %-10s |       %n",
+                (Math.round(getMinAverage() * 100) / 100.0) + "",
+                (Math.round(getTimeToBestAverage() * 100) / 100.0) + "");
+
+        logs.add(resultLine);
+
+        return logs;
+    }
+
+    private long secondBetweenDates(int runtime) {
+        return (DATEPROG[runtime].getTime() - DATEINIT[runtime].getTime()) / 1000;
+    }
+
+    private double getMinAverage() {
+        var average = Arrays.stream(GLOBALMINS)
+                .boxed()
+                .mapToInt(Integer::intValue)
+                .average();
+        if (average.isPresent()) {
+            return average.getAsDouble();
+        }
+        return 0;
+    }
+
+    private double getTimeToBestAverage() {
+        var average = IntStream.range(0, RUNTIME)
+                .boxed()
+                .mapToDouble(rt -> (double) (DATEPROG[rt].getTime() - DATEINIT[rt].getTime()) / 1000)
+                .average();
+        if (average.isPresent()) {
+            return average.getAsDouble();
+        }
+        return 0;
     }
 }
