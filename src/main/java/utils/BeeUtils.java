@@ -2,7 +2,6 @@ package main.java.utils;
 
 import main.java.variables.AbcVars;
 
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -17,16 +16,12 @@ public class BeeUtils {
     private final AbcVars vr;
     private final CommonUtils cUtils;
 
-    private List<Integer> addedCols;
-
     public BeeUtils(AbcVars vr) {
         this.vr = vr;
         this.cUtils = new CommonUtils(vr);
     }
 
     public void addColumns(BitSet cfs, BitSet rfs) {
-        addedCols = new ArrayList<>();
-
         BitSet dCols = cUtils.findDistinctColumns(cfs, rfs);
         List<Integer> distinctColumns = dCols.stream().boxed().toList();
 
@@ -52,10 +47,7 @@ public class BeeUtils {
                 .map(distinctColumns::get)
                 .limit(colAdd)
                 .boxed()
-                .forEach(j -> {
-                    addedCols.add(j);
-                    cfs.set(j);
-                });
+                .forEach(cfs::set);
     }
 
     public void dropColumns(BitSet cfs) {
@@ -76,7 +68,6 @@ public class BeeUtils {
                 .map(num -> vr.getRANDOM().nextInt(n))
                 .distinct()
                 .map(columns::get)
-                .filter(j -> !addedCols.contains(j))
                 .limit(colDrop)
                 .boxed()
                 .forEach(cfs::clear);

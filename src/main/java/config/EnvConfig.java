@@ -8,12 +8,11 @@ import java.util.Map;
 import static main.java.variables.ScpVars.setInstance;
 
 public class EnvConfig {
+    private static boolean dev = false;
     private static boolean multithread = true;
     private static int initialize = 0;
     private static int localsearch = 0;
-
     private static String initializeName;
-
     private static String localSearchName;
 
     private EnvConfig() {
@@ -39,7 +38,15 @@ public class EnvConfig {
         return localSearchName;
     }
 
+    public static String getResourcePath(String instance) {
+        return EnvConfig.dev ?
+                "src/main/resources/" + instance + ".txt" :
+                "main/resources/" + instance + ".txt";
+    }
+
     public static void setEnvironment() {
+        dev = System.getenv().get("dev") != null ?
+                Boolean.parseBoolean(System.getenv().get("dev")) : dev;
         multithread = System.getenv().get("multithread") != null ?
                 Boolean.parseBoolean(System.getenv().get("multithread")) : multithread;
         initialize = System.getenv().get("initialize") != null ?

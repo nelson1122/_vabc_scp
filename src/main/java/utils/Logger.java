@@ -20,6 +20,7 @@ public class Logger {
     private int[] RUNS;
     private int[] GLOBALMINS;
     private int[] SEEDS;
+    private BitSet[] GLOBALPARAMS;
 
     public Logger() {
         FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -34,6 +35,7 @@ public class Logger {
         DATEPROG = new Date[]{new Date(), new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date()};
+        GLOBALPARAMS = new BitSet[RUNTIME];
     }
 
     public void addProgress(int run) {
@@ -93,6 +95,31 @@ public class Logger {
             List<String> logs = buildLog2();
             System.out.print(String.format("\033[%dA", 12));
             System.out.print(String.join("", logs));
+        }
+    }
+
+    public void addGlobalParams(int run, BitSet solution) {
+        GLOBALPARAMS[run] = solution;
+    }
+
+    public void printInitialLog() {
+        List<String> logs = buildLog2();
+        System.out.print(String.join("", logs));
+    }
+
+    public void printLog() {
+        List<String> logs = buildLog2();
+        System.out.print(String.format("\033[%dA", 12));
+        System.out.print(String.join("", logs));
+    }
+
+    public void printSolutions() {
+        for (int run = 0; run < RUNTIME; run++) {
+            List<String> indexes = GLOBALPARAMS[run].stream()
+                    .mapToObj(String::valueOf)
+                    .toList();
+            System.out.print("run " + run + " => {" + String.join(", ", indexes) + "}\n");
+            System.out.println();
         }
     }
 
