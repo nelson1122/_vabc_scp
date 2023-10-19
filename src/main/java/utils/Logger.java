@@ -28,14 +28,22 @@ public class Logger {
         GLOBALMINS = new int[RUNTIME];
         SEEDS = new int[RUNTIME];
 
+        setDateInit();
+        setDateProg();
+
+        GLOBALPARAMS = new BitSet[RUNTIME];
+    }
+
+    private void setDateInit() {
         DATEINIT = new Date[]{new Date(), new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date()};
+    }
 
+    private void setDateProg() {
         DATEPROG = new Date[]{new Date(), new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date(),
                 new Date(), new Date(), new Date()};
-        GLOBALPARAMS = new BitSet[RUNTIME];
     }
 
     public void addProgress(int run) {
@@ -85,6 +93,9 @@ public class Logger {
     public void log() {
         RUNS = new int[RUNTIME];
         GLOBALMINS = new int[RUNTIME];
+        setDateInit();
+        setDateProg();
+
         List<String> logs = buildLog2();
         System.out.print(String.join("", logs));
     }
@@ -103,6 +114,11 @@ public class Logger {
     }
 
     public void printInitialLog() {
+        RUNS = new int[RUNTIME];
+        GLOBALMINS = new int[RUNTIME];
+        setDateInit();
+        setDateProg();
+
         List<String> logs = buildLog2();
         System.out.print(String.join("", logs));
     }

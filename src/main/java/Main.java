@@ -15,7 +15,6 @@ import java.util.stream.IntStream;
 
 import static main.java.config.ParamsConfig.MAX_CYCLE;
 import static main.java.config.ParamsConfig.RUNTIME;
-import static main.java.variables.ScpVars.getBest;
 import static main.java.variables.ScpVars.getINSTANCES;
 
 public class Main {
