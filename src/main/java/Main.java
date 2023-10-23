@@ -29,9 +29,9 @@ public class Main {
 
         logger.log("Variant of the Artificial Bee Colony Algorithm ABC_SCP to solve the Set Covering Problem");
         logger.log("University of Cauca, 2023");
-        logger.log("Initialize Method:  " + EnvConfig.getInitializeName() + ". " +
-                "LocalSearch Method: " + EnvConfig.getLocalSearchName() + ". " +
-                "Multi-thread: " + EnvConfig.isMultithread() + ".");
+        logger.log("Initialize Method: " + EnvConfig.getInitializeName() + " | " +
+                "LocalSearch Method: " + EnvConfig.getLocalSearchName() + " | " +
+                "Multi-thread: " + EnvConfig.isMultithread());
 
         if (EnvConfig.isMultithread()) {
             runVABCSCPMultiThread();
@@ -45,19 +45,23 @@ public class Main {
     private static void runVABCSCPMonoThread() {
         TreeMap<String, Integer> instances = new TreeMap<>(getINSTANCES());
         instances.forEach((instance, best) -> {
-            int seed = 500;
             try {
                 Problem.read(EnvConfig.getResourcePath(instance));
+                logger.log("Problem processing [" + instance + "] has started..");
                 logger.printInitialLog();
+                seed = 0;
 
                 for (int run = 0; run < RUNTIME; run++) {
-                    seed += 500;
+                    seed += 900;
                     logger.setSeed(run, seed);
                     logger.setDateInit(run);
 
                     var vr = new AbcVars(seed);
                     vr.setInitializeMethod(EnvConfig.getInitialize());
                     vr.setLocalSearchMethod(EnvConfig.getLocalsearch());
+
+                    logger.setSeed(run, seed);
+                    logger.setDateInit(run);
 
                     var bee = new BeeColony(vr);
                     bee.initial();
@@ -97,16 +101,16 @@ public class Main {
         instances.forEach((instance, best) -> {
             try {
                 Problem.read(EnvConfig.getResourcePath(instance));
-                logger.log("Problem processing [" + instance + "] has started!");
+                logger.log("Problem processing [" + instance + "] has started..");
                 logger.log();
-                seed = 50;
+                seed = 0;
 
                 ForkJoinPool forkJoinPool = new ForkJoinPool(RUNTIME);
                 List<ForkJoinTask<Tuple3<Integer, Integer, BitSet>>> results =
                         IntStream.range(0, RUNTIME)
                                 .sorted()
                                 .mapToObj(rIndex -> forkJoinPool.submit(() -> {
-                                    seed = seed + 80;
+                                    seed = seed + 900;
                                     logger.setSeed(rIndex, seed);
                                     return runVABCSCP(rIndex, seed, best);
                                 })).toList();
@@ -124,21 +128,23 @@ public class Main {
 
             } catch (Exception ex) {
                 logger.log("Error processing instance..");
-                ex.printStackTrace();
                 Thread.currentThread().interrupt();
             }
         });
     }
 
     private static Tuple3<Integer, Integer, BitSet> runVABCSCP(int runtime, int seed, int best) {
-        AbcVars vr = new AbcVars(seed);
+        logger.setDateInit(runtime);
+        logger.setSeed(runtime, seed);
+
+        var vr = new AbcVars(seed);
         vr.setInitializeMethod(EnvConfig.getInitialize());
         vr.setLocalSearchMethod(EnvConfig.getLocalsearch());
 
-        BeeColony bee = new BeeColony(vr);
-        logger.setDateInit(runtime);
+        var bee = new BeeColony(vr);
         bee.initial();
         bee.memorizeBestSource();
+
         for (int iter = 1; iter <= MAX_CYCLE; iter++) {
             bee.sendEmployedBees();
             bee.calculateProbabilitiesOne();
@@ -154,6 +160,7 @@ public class Main {
                 break;
             }
         }
+
         vr.addGlobalMin(vr.getGLOBALMIN());
         return new Tuple3<>(runtime, vr.getGLOBALMIN(), vr.getGLOBALPARAMS());
     }

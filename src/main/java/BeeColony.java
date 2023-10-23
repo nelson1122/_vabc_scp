@@ -4,7 +4,6 @@ package main.java;
 import main.java.utils.BeeUtils;
 import main.java.utils.CommonUtils;
 import main.java.utils.Tuple2;
-import main.java.utils.Tuple3;
 import main.java.variables.AbcVars;
 
 import java.util.ArrayList;
@@ -208,7 +207,6 @@ public class BeeColony {
                         .sorted(Collections.reverseOrder(Comparator.comparing(Tuple2::getT2)))
                         .toList();
         vr.setPROBSRW(probSorted);
-
     }
 
     public void calculateProbabilitiesTwo() {

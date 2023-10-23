@@ -79,7 +79,7 @@ public class EnvConfig {
 
     private static void setINSTANCES() {
         ScpVars.setINSTANCES(new HashMap<>());
-        setInstance("scp41", 429);
+//        setInstance("scp41", 429);
 /*
         setInstance("scpnre1", 29);
         setInstance("scpnre2", 30);
@@ -92,16 +92,16 @@ public class EnvConfig {
         setInstance("scpnrf3", 14);
         setInstance("scpnrf4", 14);
 */
-        setInstance("scpnrf5", 13);
+//        setInstance("scpnrf5", 13);
 
 //        setInstance("scpnrg1", 176);
-        setInstance("scpnrg2", 154);
+//        setInstance("scpnrg2", 154);
         setInstance("scpnrg3", 166);
         setInstance("scpnrg4", 168);
-        setInstance("scpnrg5", 168);
-
-        setInstance("scpnrh1", 63);
-        setInstance("scpnrh2", 63);
+//        setInstance("scpnrg5", 168);
+//
+//        setInstance("scpnrh1", 63);
+//        setInstance("scpnrh2", 63);
 /*
         setInstance("scpnrh3", 59);
         setInstance("scpnrh4", 58);

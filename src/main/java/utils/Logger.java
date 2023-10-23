@@ -64,15 +64,19 @@ public class Logger {
     }
 
     public void log(Tuple3<Integer, Integer, BitSet> result) {
-        log((result.getT1() + 1) + " run: " + result.getT2());
         List<String> indexes = result.getT3().stream()
+                .map(x -> x + 1)
                 .mapToObj(String::valueOf)
-                .collect(Collectors.toList());
-        log("GLOBALPARAMS => {" + String.join(", ", indexes) + "}");
+                .toList();
+        logSolution("run " + result.getT1() + " => {" + String.join(",", indexes) + "}");
     }
 
     public void log(String message) {
         System.out.printf("%s ==> %s%n", FORMAT.format(new Date()), message);
+    }
+
+    public void logSolution(String message) {
+        System.out.printf("%s%n%n", message);
     }
 
     public void printProgress(int run, int iter) {
@@ -86,7 +90,7 @@ public class Logger {
         log((run + 1) + ".run:" + globalMin);
         List<String> indexes = globalParams.stream()
                 .mapToObj(String::valueOf)
-                .collect(Collectors.toList());
+                .toList();
         log("GLOBALPARAMS => {" + String.join(", ", indexes) + "}");
     }
 
@@ -132,10 +136,10 @@ public class Logger {
     public void printSolutions() {
         for (int run = 0; run < RUNTIME; run++) {
             List<String> indexes = GLOBALPARAMS[run].stream()
+                    .map(x -> x + 1)
                     .mapToObj(String::valueOf)
                     .toList();
-            System.out.print("run " + run + " => {" + String.join(", ", indexes) + "}\n");
-            System.out.println();
+            logSolution("run " + run + " => {" + String.join(", ", indexes) + "}");
         }
     }
 
@@ -235,6 +239,7 @@ public class Logger {
         var average = Arrays.stream(GLOBALMINS)
                 .boxed()
                 .mapToInt(Integer::intValue)
+                .filter(min -> min > 0)
                 .average();
         if (average.isPresent()) {
             return average.getAsDouble();
@@ -246,6 +251,7 @@ public class Logger {
         var average = IntStream.range(0, RUNTIME)
                 .boxed()
                 .mapToDouble(rt -> (double) (DATEPROG[rt].getTime() - DATEINIT[rt].getTime()) / 1000)
+                .filter(time -> time > 0)
                 .average();
         if (average.isPresent()) {
             return average.getAsDouble();

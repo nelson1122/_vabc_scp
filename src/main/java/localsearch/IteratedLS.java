@@ -54,19 +54,19 @@ public class IteratedLS {
         BitSet L1 = new BitSet();
         BitSet L2 = new BitSet();
 
-        fs.stream().forEach(j -> {
-            double rNum = vr.getRANDOM().nextDouble();
-            if (rNum < 0.1) {
-                L1.set(j);
-            }
-        });
+        List<Integer> columns = fs.stream().boxed().toList();
 
-        fs.stream().forEach(j -> {
-            double rNum = vr.getRANDOM().nextDouble();
-            if (rNum < 0.1) {
-                L2.set(j);
-            }
-        });
+        vr.getRANDOM().ints(0, fs.cardinality())
+                .distinct()
+                .limit(10)
+                .map(columns::get)
+                .boxed().forEach(L1::set);
+
+        vr.getRANDOM().ints(0, fs.cardinality())
+                .distinct()
+                .limit(10)
+                .map(columns::get)
+                .boxed().forEach(L2::set);
 
         List<BitSet> groupedLists = new ArrayList<>();
         groupedLists.add(L1);

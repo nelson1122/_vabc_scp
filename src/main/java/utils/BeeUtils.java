@@ -29,25 +29,30 @@ public class BeeUtils {
         int dc = dCols.cardinality();
         int colAdd;
 
+        boolean addAllColumns = false;
         if (n > 35) {
             colAdd = COL_ADD_1;
             if (dc < COL_ADD_1) {
-                colAdd = dc;
+                addAllColumns = true;
             }
         } else {
             colAdd = COL_ADD_2;
             if (dc < COL_ADD_2) {
-                colAdd = dc;
+                addAllColumns = true;
             }
         }
 
-        IntStream.range(0, dc)
-                .map(num -> vr.getRANDOM().nextInt(dc))
-                .distinct()
-                .map(distinctColumns::get)
-                .limit(colAdd)
-                .boxed()
-                .forEach(cfs::set);
+        if (addAllColumns) {
+            distinctColumns.forEach(cfs::set);
+        } else {
+            IntStream.range(0, dc)
+                    .map(num -> vr.getRANDOM().nextInt(dc))
+                    .distinct()
+                    .map(distinctColumns::get)
+                    .limit(colAdd)
+                    .boxed()
+                    .forEach(cfs::set);
+        }
     }
 
     public void dropColumns(BitSet cfs) {
