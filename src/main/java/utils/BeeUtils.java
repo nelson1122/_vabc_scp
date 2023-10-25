@@ -32,12 +32,12 @@ public class BeeUtils {
         boolean addAllColumns = false;
         if (n > 35) {
             colAdd = COL_ADD_1;
-            if (dc < COL_ADD_1) {
+            if (dc <= COL_ADD_1) {
                 addAllColumns = true;
             }
         } else {
             colAdd = COL_ADD_2;
-            if (dc < COL_ADD_2) {
+            if (dc <= COL_ADD_2) {
                 addAllColumns = true;
             }
         }

@@ -117,17 +117,14 @@ public class BeeColony {
 
                     fs = localSearch.apply(fs);
 
-                    boolean improved = memorizeSource(fs, foodNumber.get());
-                    if (improved) {
-                        calculateProbabilitiesOne();
-                    }
+                    memorizeSource(fs, foodNumber.get());
                 });
     }
 
     public void sendScoutBees() {
         IntStream.range(0, FOOD_NUMBER)
                 .boxed()
-                .filter(foodNumber -> vr.getTrial(foodNumber) > LIMIT)
+                .filter(foodNumber -> vr.getTrial(foodNumber) >= LIMIT)
                 .forEach(foodNumber -> {
                     BitSet newFoodSource = initialization.createSolution();
                     int fitness = cUtils.calculateFitnessOne(newFoodSource);
@@ -165,29 +162,23 @@ public class BeeColony {
                 });
     }
 
-    private boolean memorizeSource(BitSet newfs, int foodNum) {
+    private void memorizeSource(BitSet newfs, int foodNum) {
         int currFitness = vr.getFitness(foodNum);
         int newFitness = cUtils.calculateFitnessOne(newfs);
-        boolean improved = false;
 
         if (currFitness > newFitness) {
             vr.setFoodSource(foodNum, (BitSet) newfs.clone());
             vr.setFitness(foodNum, newFitness);
             vr.setTrial(foodNum, 0);
-            improved = true;
         } else if (currFitness == newFitness) {
             int newFitnessTwo = cUtils.calculateFitnessTwo(newfs);
             int currFitnessTwo = cUtils.calculateFitnessTwo(vr.getFoodSource(foodNum));
             if (currFitnessTwo > newFitnessTwo) {
                 vr.setFoodSource(foodNum, (BitSet) newfs.clone());
-                vr.setTrial(foodNum, 0);
-            } else {
-                vr.incrementTrial(foodNum);
             }
         } else {
             vr.incrementTrial(foodNum);
         }
-        return improved;
     }
 
     public void calculateProbabilitiesOne() {
