@@ -52,7 +52,7 @@ public class Main {
                 seed = 0;
 
                 for (int run = 0; run < RUNTIME; run++) {
-                    seed += 900;
+                    seed += 10;
                     logger.setSeed(run, seed);
                     logger.setDateInit(run);
 
@@ -110,7 +110,7 @@ public class Main {
                         IntStream.range(0, RUNTIME)
                                 .sorted()
                                 .mapToObj(rIndex -> forkJoinPool.submit(() -> {
-                                    seed = seed + 900;
+                                    seed = seed + 10;
                                     logger.setSeed(rIndex, seed);
                                     return runVABCSCP(rIndex, seed, best);
                                 })).toList();

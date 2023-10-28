@@ -6,19 +6,11 @@ import main.java.utils.CommonUtils;
 import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import static main.java.config.ParamsConfig.EMPLOYED_BEES;
-import static main.java.config.ParamsConfig.FOOD_NUMBER;
-import static main.java.config.ParamsConfig.LIMIT;
-import static main.java.config.ParamsConfig.ONLOOKER_BEES;
+import static main.java.config.ParamsConfig.*;
 
 public class BeeColony {
     private AbcVars vr;

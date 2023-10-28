@@ -106,7 +106,7 @@ public class Logger {
 
     public void start(ForkJoinPool forkJoinPool) throws InterruptedException {
         while (!forkJoinPool.isTerminated()) {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             List<String> logs = buildLog2();
             System.out.print(String.format("\033[%dA", 12));
             System.out.print(String.join("", logs));

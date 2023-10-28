@@ -48,11 +48,9 @@ public class RowWeightedMutation {
         BitSet fsMutation = (BitSet) fs.clone();
         BitSet uncoveredRows = cUtils.findUncoveredRows(fsMutation);
 
-        int randomFood = cUtils.randomNumber(FOOD_NUMBER);
-        BitSet rfs = vr.getFoodSource(randomFood);
-
         calculateInitialPriority();
-        calculateInitialScore(rfs);
+        calculateInitialScore(fsMutation);
+
         int colDrop = 0;
         int colAdd = 0;
 
@@ -65,7 +63,7 @@ public class RowWeightedMutation {
                 double maxScore = fsMutation.stream()
                         .boxed()
                         .mapToDouble(j -> s[j])
-                        .max()
+                        .min()
                         .getAsDouble();
 
                 colDrop = fsMutation.stream()
@@ -106,7 +104,7 @@ public class RowWeightedMutation {
 
                 double maxScore = cols.stream()
                         .mapToDouble(j -> s[j])
-                        .min()
+                        .max()
                         .getAsDouble();
 
                 colAdd = cols.stream()

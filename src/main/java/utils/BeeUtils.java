@@ -2,19 +2,19 @@ package main.java.utils;
 
 import main.java.variables.AbcVars;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static main.java.config.ParamsConfig.COL_ADD_1;
-import static main.java.config.ParamsConfig.COL_ADD_2;
-import static main.java.config.ParamsConfig.COL_DROP_1;
-import static main.java.config.ParamsConfig.COL_DROP_2;
+import static main.java.config.ParamsConfig.*;
 
 
 public class BeeUtils {
     private final AbcVars vr;
     private final CommonUtils cUtils;
+
+    private List<Integer> addedCols;
 
     public BeeUtils(AbcVars vr) {
         this.vr = vr;
@@ -22,6 +22,8 @@ public class BeeUtils {
     }
 
     public void addColumns(BitSet cfs, BitSet rfs) {
+        addedCols = new ArrayList<>();
+
         BitSet dCols = cUtils.findDistinctColumns(cfs, rfs);
         List<Integer> distinctColumns = dCols.stream().boxed().toList();
 
@@ -43,7 +45,11 @@ public class BeeUtils {
         }
 
         if (addAllColumns) {
-            distinctColumns.forEach(cfs::set);
+            distinctColumns
+                    .forEach(j -> {
+                        addedCols.add(j);
+                        cfs.set(j);
+                    });
         } else {
             IntStream.range(0, dc)
                     .map(num -> vr.getRANDOM().nextInt(dc))
@@ -51,7 +57,10 @@ public class BeeUtils {
                     .map(distinctColumns::get)
                     .limit(colAdd)
                     .boxed()
-                    .forEach(cfs::set);
+                    .forEach(j -> {
+                        addedCols.add(j);
+                        cfs.set(j);
+                    });
         }
     }
 
@@ -73,6 +82,7 @@ public class BeeUtils {
                 .map(num -> vr.getRANDOM().nextInt(n))
                 .distinct()
                 .map(columns::get)
+                .filter(j -> !addedCols.contains(j))
                 .limit(colDrop)
                 .boxed()
                 .forEach(cfs::clear);

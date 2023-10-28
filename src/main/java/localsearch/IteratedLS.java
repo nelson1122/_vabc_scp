@@ -58,13 +58,13 @@ public class IteratedLS {
 
         vr.getRANDOM().ints(0, fs.cardinality())
                 .distinct()
-                .limit(10)
+                .limit(5)
                 .map(columns::get)
                 .boxed().forEach(L1::set);
 
         vr.getRANDOM().ints(0, fs.cardinality())
                 .distinct()
-                .limit(10)
+                .limit(5)
                 .map(columns::get)
                 .boxed().forEach(L2::set);
 
