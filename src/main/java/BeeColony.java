@@ -85,17 +85,14 @@ public class BeeColony {
                 .forEach(t -> {
                     int foodNumber = 0;
                     double r = vr.getNextDouble();
-//                    double rNum = cUtils.roundDouble(r);
 
                     double cumulativeProbability = 0.0;
                     for (int fs = 0; fs < FOOD_NUMBER; fs++) {
                         cumulativeProbability += vr.getProbabilityValue(fs);
-                        if (r < cumulativeProbability) {
+                        double roundProb = cUtils.roundDouble(cumulativeProbability);
+                        if (r < roundProb) {
                             foodNumber = vr.getProbabilityIndex(fs);
                             break;
-                        }
-                        if(r == cumulativeProbability){
-                            System.out.printf("");
                         }
                     }
 
@@ -197,8 +194,6 @@ public class BeeColony {
                 IntStream.range(0, FOOD_NUMBER)
                         .boxed()
                         .map(p -> new Tuple(p, vr.getProbability(p)))
-//                        .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2)
-//                                .thenComparing(Tuple::getT1)))
                         .toList();
         vr.setPROBSRW(probSorted);
     }

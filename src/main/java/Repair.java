@@ -37,7 +37,6 @@ public class Repair {
             int columnIndex;
 
             double r = vr.getNextDouble();
-//            double rNum = cUtils.roundDouble(r);
 
             if (r < Pa) {
                 columnIndex = rUtils.getColumnMinRatio(uncoveredRows, indexRowUncovered);
