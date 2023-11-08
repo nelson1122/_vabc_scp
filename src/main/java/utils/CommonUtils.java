@@ -51,15 +51,15 @@ public class CommonUtils {
         return randomFoodSource(i);
     }
 
-    public BitSet findDistinctColumns(BitSet cfs, BitSet rfs) {
-        BitSet s1 = (BitSet) cfs.clone();
-        BitSet s2 = (BitSet) rfs.clone();
+    public BitSet findDistinctColumns(BitSet xj1, BitSet xj2) {
+        BitSet s1 = (BitSet) xj1.clone();
+        BitSet s2 = (BitSet) xj2.clone();
         s2.andNot(s1);
         return s2;
     }
 
-    public BitSet findUncoveredRows(BitSet cfs) {
-        Optional<BitSet> optCoveredRows = cfs.stream()
+    public BitSet findUncoveredRows(BitSet xj) {
+        Optional<BitSet> optCoveredRows = xj.stream()
                 .boxed()
                 .map(ScpVars::getRowsCoveredByColumn)
                 .reduce((x, y) -> {
@@ -74,12 +74,13 @@ public class CommonUtils {
         return getROWINTS();
     }
 
-    public BitSet getColumnsRandomFoodSource(BitSet cfs, int i) {
-        int randomFoodS = randomFoodSource(i);
-        BitSet distinctColumns = findDistinctColumns(cfs, vr.getFoodSource(randomFoodS));
+    public BitSet getColumnsRandomFoodSource(BitSet xj, int i) {
+        int rIndex = randomFoodSource(i);
+        var rxj = vr.getFoodSource(rIndex);
+        var distinctColumns = findDistinctColumns(xj, rxj);
         if (!distinctColumns.isEmpty()) {
             return distinctColumns;
         }
-        return getColumnsRandomFoodSource(cfs, i);
+        return getColumnsRandomFoodSource(xj, i);
     }
 }
