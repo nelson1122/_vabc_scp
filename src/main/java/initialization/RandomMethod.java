@@ -8,7 +8,7 @@ import static main.java.variables.ScpVars.getCOLUMNINTS;
 
 public class RandomMethod {
     private final AbcVars vr;
-    private static final double RATIO = 0.5;
+    private static final double RATIO = 0.1;
 
     public RandomMethod(AbcVars vr) {
         this.vr = vr;
@@ -18,7 +18,7 @@ public class RandomMethod {
         BitSet fs = new BitSet();
         getCOLUMNINTS()
                 .forEach(j -> {
-                    double r = vr.getRANDOM().nextDouble();
+                    double r = vr.getNextDouble();
                     if (r < RATIO) {
                         fs.set(j);
                     }

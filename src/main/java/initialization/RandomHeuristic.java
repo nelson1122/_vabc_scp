@@ -35,7 +35,7 @@ public class RandomHeuristic {
             fs.set(j);
             uncoveredRows = cUtils.findUncoveredRows(fs);
         }
-        removeRepeatedColumns(fs);
+//        removeRepeatedColumns(fs);
         return fs;
     }
 
@@ -45,7 +45,7 @@ public class RandomHeuristic {
                 .boxed()
                 .map(i -> {
                     int Li = getColumnsCoveringRow(i).size();
-                    return new Tuple2<>(i, 1.0 / Li);
+                    return new Tuple2<>(i, (double) 1 / Li);
                 })
                 //.sorted(Collections.reverseOrder(Comparator.comparingDouble(Tuple2::getT2)))
                 .sorted(Comparator.comparingDouble(Tuple2::getT2))

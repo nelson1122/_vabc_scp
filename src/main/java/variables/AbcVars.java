@@ -1,6 +1,7 @@
 package main.java.variables;
 
 
+import main.java.utils.Tuple;
 import main.java.utils.Tuple2;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class AbcVars {
     private List<Integer> FITNESS;
     private int[] TRIAL;
     private List<Double> PROB;
-    private List<Tuple2<Integer, Double>> PROBSRW;
+    private List<Tuple> PROBSRW;
     private Integer GLOBALMIN;
     private List<Integer> GLOBALMINS;
     private Double MEAN;
@@ -73,11 +74,11 @@ public class AbcVars {
         this.PROB = PROB;
     }
 
-    public List<Tuple2<Integer, Double>> getPROBSRW() {
+    public List<Tuple> getPROBSRW() {
         return new ArrayList<>(PROBSRW);
     }
 
-    public void setPROBSRW(List<Tuple2<Integer, Double>> PROBSRW) {
+    public void setPROBSRW(List<Tuple> PROBSRW) {
         this.PROBSRW = PROBSRW;
     }
 
@@ -137,6 +138,10 @@ public class AbcVars {
         this.localSearchMethod = localSearchMethod;
     }
 
+    public double getNextDouble(){
+        return this.RANDOM.nextDouble();
+    }
+
     // Custom Methods
     public void addFoodSource(BitSet foodSource) {
         this.FOODS.add(foodSource);
@@ -191,12 +196,12 @@ public class AbcVars {
     }
 
     public double getProbabilityValue(int index) {
-        Tuple2<Integer, Double> prob = PROBSRW.get(index);
+        Tuple prob = PROBSRW.get(index);
         return prob.getT2();
     }
 
     public int getProbabilityIndex(int index) {
-        Tuple2<Integer, Double> prob = PROBSRW.get(index);
+        Tuple prob = PROBSRW.get(index);
         return prob.getT1();
     }
 }

@@ -48,14 +48,14 @@ public class IterativeConstruction {
                     .sorted(Comparator.comparing(Tuple2::getT2))
                     .toList();
 
-            double r = vr.getRANDOM().nextDouble();
+            double r = vr.getNextDouble();
 //            double rNum = cUtils.roundDouble(r);
 
             double ratio = 100.0 / cols.size();
 
             if (r < ratio) {
                 double sumFunction = cols.stream().mapToDouble(Tuple2::getT2).sum();
-                double r2 = vr.getRANDOM().nextDouble();
+                double r2 = vr.getNextDouble();
                 double cumulativeProbability = 0.0;
 
                 for (Tuple2<Integer, Double> c : cols) {

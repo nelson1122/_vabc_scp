@@ -18,6 +18,7 @@ import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
+    private final int Pa = 92;
 
     public IteratedLS(AbcVars vr) {
         this.vr = vr;
@@ -54,19 +55,18 @@ public class IteratedLS {
         BitSet L1 = new BitSet();
         BitSet L2 = new BitSet();
 
-        List<Integer> columns = fs.stream().boxed().toList();
-
-        vr.getRANDOM().ints(0, fs.cardinality())
-                .distinct()
-                .limit(5)
-                .map(columns::get)
-                .boxed().forEach(L1::set);
-
-        vr.getRANDOM().ints(0, fs.cardinality())
-                .distinct()
-                .limit(5)
-                .map(columns::get)
-                .boxed().forEach(L2::set);
+        fs.stream()
+                .boxed()
+                .forEach(j -> {
+                    double r = vr.getNextDouble();
+                    if (r < Pa) {
+                        if (vr.getRANDOM().nextBoolean()) {
+                            L1.set(j);
+                        } else {
+                            L2.set(j);
+                        }
+                    }
+                });
 
         List<BitSet> groupedLists = new ArrayList<>();
         groupedLists.add(L1);

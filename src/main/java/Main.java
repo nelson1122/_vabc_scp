@@ -9,6 +9,7 @@ import java.util.BitSet;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.stream.IntStream;
@@ -110,7 +111,7 @@ public class Main {
                         IntStream.range(0, RUNTIME)
                                 .sorted()
                                 .mapToObj(rIndex -> forkJoinPool.submit(() -> {
-                                    seed = seed + 10;
+                                    seed = new Random().nextInt(10000, 11000);
                                     logger.setSeed(rIndex, seed);
                                     return runVABCSCP(rIndex, seed, best);
                                 })).toList();
@@ -122,9 +123,7 @@ public class Main {
                         .mapToInt(x -> {
                             logger.log(x);
                             return x.getT2();
-                        })
-                        .average()
-                        .ifPresent(average -> logger.log("Runs average: " + average + "\n"));
+                        });
 
             } catch (Exception ex) {
                 logger.log("Error processing instance..");

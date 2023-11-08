@@ -1,6 +1,6 @@
 package main.java.localsearch;
 
-import main.java.utils.Tuple2;
+import main.java.utils.Tuple;
 import main.java.variables.ScpVars;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static main.java.variables.ScpVars.ROWS;
+import static main.java.variables.ScpVars.getROWS;
 import static main.java.variables.ScpVars.getColumnsCoveringRow;
 import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRowsCoveredByColumn;
@@ -21,7 +21,7 @@ public class ABCSCP {
     }
 
     public BitSet applyLocalSearch(BitSet cfs) {
-        int[] u = new int[ROWS];
+        int[] u = new int[getROWS()];
 
         // 1- Computing for each row i the number of columns ui in the current solution covering it.
         cfs.stream()
@@ -38,9 +38,10 @@ public class ABCSCP {
 
             cfs.stream()
                     .boxed()
-                    .map(j -> new Tuple2<>(j, getCost(j)))
-                    .sorted(Collections.reverseOrder(Comparator.comparing(Tuple2::getT2)))
-                    .map(Tuple2::getT1)
+                    .map(j -> new Tuple(j, (double) getCost(j)))
+                    .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2)
+                            .thenComparing(Tuple::getT1)))
+                    .map(Tuple::getT1)
                     .forEach(j -> {
                         List<Integer> rowsCoveredByOneColumn = new ArrayList<>();
                         BitSet bj = getRowsCoveredByColumn(j);

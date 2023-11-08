@@ -2,7 +2,7 @@ package main.java;
 
 import main.java.utils.CommonUtils;
 import main.java.utils.RepairUtils;
-import main.java.utils.Tuple2;
+import main.java.utils.Tuple;
 import main.java.variables.AbcVars;
 
 import java.util.BitSet;
@@ -36,7 +36,7 @@ public class Repair {
             int indexRowUncovered = uncoveredRowsList.get(0);
             int columnIndex;
 
-            double r = vr.getRANDOM().nextDouble();
+            double r = vr.getNextDouble();
 //            double rNum = cUtils.roundDouble(r);
 
             if (r < Pa) {
@@ -54,9 +54,10 @@ public class Repair {
         BitSet cfsCopy = (BitSet) cfs.clone();
         cfsCopy.stream()
                 .boxed()
-                .map(j -> new Tuple2<>(j, getRatioCostRowsCovered(j)))
-                .sorted(Collections.reverseOrder(Comparator.comparing(Tuple2::getT2)))
-                .map(Tuple2::getT1)
+                .map(j -> new Tuple(j, getRatioCostRowsCovered(j)))
+                .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2)
+                        .thenComparing(Tuple::getT1)))
+                .map(Tuple::getT1)
                 .forEach(columnIndex -> {
                     cfs.clear(columnIndex);
                     BitSet uncoveredRows = cUtils.findUncoveredRows(cfs);
