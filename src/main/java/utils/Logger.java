@@ -35,15 +35,17 @@ public class Logger {
     }
 
     private void setDateInit() {
-        DATEINIT = new Date[]{new Date(), new Date(), new Date(), new Date(),
-                new Date(), new Date(), new Date(),
-                new Date(), new Date(), new Date()};
+        DATEINIT = new Date[RUNTIME];
+        for (int i = 0; i < RUNTIME; i++) {
+            DATEINIT[i] = new Date();
+        }
     }
 
     private void setDateProg() {
-        DATEPROG = new Date[]{new Date(), new Date(), new Date(), new Date(),
-                new Date(), new Date(), new Date(),
-                new Date(), new Date(), new Date()};
+        DATEPROG = new Date[RUNTIME];
+        for (int i = 0; i < RUNTIME; i++) {
+            DATEPROG[i] = new Date();
+        }
     }
 
     public void addProgress(int run) {
@@ -108,7 +110,7 @@ public class Logger {
         while (!forkJoinPool.isTerminated()) {
             Thread.sleep(1000);
             List<String> logs = buildLog2();
-            System.out.print(String.format("\033[%dA", 12));
+            System.out.print(String.format("\033[%dA", (RUNTIME + 2)));
             System.out.print(String.join("", logs));
         }
     }
@@ -129,7 +131,7 @@ public class Logger {
 
     public void printLog() {
         List<String> logs = buildLog2();
-        System.out.print(String.format("\033[%dA", 12));
+        System.out.print(String.format("\033[%dA", (RUNTIME + 2)));
         System.out.print(String.join("", logs));
     }
 
@@ -199,7 +201,7 @@ public class Logger {
 
     public List<String> buildLog2() {
         List<String> logs = new ArrayList<>();
-        String header = String.format("                        | run   | seed  | iter  | min   | ttb        | prog  %n");
+        String header = String.format("                        | run   | seed    | iter  | min   | ttb        | prog  %n");
         logs.add(header);
 
         for (int runtime = 0; runtime < RUNS.length; runtime++) {
@@ -211,7 +213,7 @@ public class Logger {
                 progressLine = progressLine.concat("·");
             }
 
-            String line = String.format("%-20s | %-5d | %-5d | %-5d | %-5d | %-10d | %-5s %n",
+            String line = String.format("%-20s | %-5d | %-7d | %-5d | %-5d | %-10d | %-5s %n",
                     FORMAT.format(DATEPROG[runtime]),
                     runtime,
                     SEEDS[runtime],
@@ -222,7 +224,7 @@ public class Logger {
             logs.add(line);
         }
 
-        String resultLine = String.format("                                                | %-5s | %-10s |       %n",
+        String resultLine = String.format("                                                  | %-5s | %-10s |       %n",
                 (Math.round(getMinAverage() * 100) / 100.0) + "",
                 (Math.round(getTimeToBestAverage() * 100) / 100.0) + "");
 

@@ -89,8 +89,7 @@ public class BeeColony {
                     double cumulativeProbability = 0.0;
                     for (int fs = 0; fs < FOOD_NUMBER; fs++) {
                         cumulativeProbability += vr.getProbabilityValue(fs);
-                        double roundProb = cUtils.roundDouble(cumulativeProbability);
-                        if (r < roundProb) {
+                        if (r < cumulativeProbability) {
                             foodNumber = vr.getProbabilityIndex(fs);
                             break;
                         }
@@ -112,21 +111,16 @@ public class BeeColony {
     }
 
     public void sendScoutBees() {
-        var foodMaxTrial =
-                IntStream.range(0, FOOD_NUMBER)
-                        .boxed()
-                        .map(foodNumber -> new Tuple(foodNumber, (double) vr.getTrial(foodNumber)))
-                        .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2)
-                                .thenComparing(Tuple::getT1)))
-                        .toList().get(0);
-        if (foodMaxTrial.getT2() >= LIMIT) {
-            int foodNumber = foodMaxTrial.getT1();
-            BitSet newFoodSource = initialization.createSolution();
-            int fitness = cUtils.calculateFitnessOne(newFoodSource);
-            vr.setFoodSource(foodNumber, newFoodSource);
-            vr.setFitness(foodNumber, fitness);
-            vr.setTrial(foodNumber, 0);
-        }
+        IntStream.range(0, FOOD_NUMBER)
+                .boxed()
+                .filter(foodNumber -> vr.getTrial(foodNumber) >= LIMIT)
+                .forEach(foodNumber -> {
+                    BitSet newFoodSource = initialization.createSolution();
+                    int fitness = cUtils.calculateFitnessOne(newFoodSource);
+                    vr.setFoodSource(foodNumber, newFoodSource);
+                    vr.setFitness(foodNumber, fitness);
+                    vr.setTrial(foodNumber, 0);
+                });
     }
 
 
@@ -142,7 +136,10 @@ public class BeeColony {
                 .boxed()
                 .forEach(foodNum -> {
                     int fitness = vr.getFitness(foodNum);
-                    if (vr.getGLOBALMIN() == fitness) {
+                    if (vr.getGLOBALMIN() > fitness) {
+                        vr.setGLOBALMIN(fitness);
+                        vr.setGLOBALPARAMS(vr.getFoodSource(foodNum));
+                    } else if (vr.getGLOBALMIN() == fitness) {
                         BitSet currentFS = vr.getFoodSource(foodNum);
                         BitSet currentBestFS = vr.getGLOBALPARAMS();
                         int f = cUtils.calculateFitnessTwo(currentFS);
@@ -150,9 +147,6 @@ public class BeeColony {
                         if (fGlobal > f) {
                             vr.setGLOBALPARAMS(vr.getFoodSource(foodNum));
                         }
-                    } else if (vr.getGLOBALMIN() > fitness) {
-                        vr.setGLOBALMIN(fitness);
-                        vr.setGLOBALPARAMS(vr.getFoodSource(foodNum));
                     }
                 });
     }
@@ -194,6 +188,7 @@ public class BeeColony {
                 IntStream.range(0, FOOD_NUMBER)
                         .boxed()
                         .map(p -> new Tuple(p, vr.getProbability(p)))
+                        .sorted(Comparator.comparing(Tuple::getT2))
                         .toList();
         vr.setPROBSRW(probSorted);
     }

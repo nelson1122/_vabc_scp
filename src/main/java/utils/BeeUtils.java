@@ -13,17 +13,15 @@ import static main.java.config.ParamsConfig.*;
 public class BeeUtils {
     private final AbcVars vr;
     private final CommonUtils cUtils;
-
-    private List<Integer> addedCols;
+    private final List<Integer> addedCols;
 
     public BeeUtils(AbcVars vr) {
         this.vr = vr;
         this.cUtils = new CommonUtils(vr);
+        this.addedCols = new ArrayList<>();
     }
 
     public void addColumns(BitSet cfs, BitSet rfs) {
-        addedCols = new ArrayList<>();
-
         BitSet dCols = cUtils.findDistinctColumns(cfs, rfs);
         List<Integer> distinctColumns = dCols.stream().boxed().toList();
 
@@ -86,5 +84,7 @@ public class BeeUtils {
                 .limit(colDrop)
                 .boxed()
                 .forEach(cfs::clear);
+
+        addedCols.clear();
     }
 }

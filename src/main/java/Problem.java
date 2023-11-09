@@ -1,30 +1,16 @@
 package main.java;
 
+import main.java.config.EnvConfig;
 import main.java.utils.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Scanner;
 
-import static main.java.variables.ScpVars.getCOLUMNS;
-import static main.java.variables.ScpVars.getColumnsCoveringRow;
-import static main.java.variables.ScpVars.getCost;
-import static main.java.variables.ScpVars.getROWS;
-import static main.java.variables.ScpVars.getRowsCoveredByColumn;
-import static main.java.variables.ScpVars.setCOLUMNINTS;
-import static main.java.variables.ScpVars.setCOLUMNS;
-import static main.java.variables.ScpVars.setCOLUMNSCOVERINGROW;
-import static main.java.variables.ScpVars.setCOSTS;
-import static main.java.variables.ScpVars.setColumnsCoveringRow;
-import static main.java.variables.ScpVars.setCost;
-import static main.java.variables.ScpVars.setRATIOCOSTROWSCOVERED;
-import static main.java.variables.ScpVars.setROWINTS;
-import static main.java.variables.ScpVars.setROWS;
-import static main.java.variables.ScpVars.setROWSCOVEREDBYCOLUMN;
-import static main.java.variables.ScpVars.setRatioCostRowsCovered;
-import static main.java.variables.ScpVars.setRowsCoveredByColumn;
+import static main.java.variables.ScpVars.*;
 
 
 public class Problem {
@@ -35,9 +21,7 @@ public class Problem {
 
     public static void read(String filePath) throws IOException {
         logger.log("Loading problem [" + filePath + "] ...");
-
-        File file = new File(filePath);
-        Scanner scanner = new Scanner(file);
+        Scanner scanner = readFile(filePath);
 
         setROWS(scanner.nextInt());
         setCOLUMNS(scanner.nextInt());
@@ -84,5 +68,16 @@ public class Problem {
 
         scanner.close();
         logger.log("Problem [" + filePath + "] has been loaded.");
+    }
+
+
+    private static Scanner readFile(String filePath) throws IOException {
+        if (EnvConfig.isDev()) {
+            File file = new File(filePath);
+            return new Scanner(file);
+        } else {
+            InputStream file = Problem.class.getResourceAsStream(filePath);
+            return new Scanner(file);
+        }
     }
 }

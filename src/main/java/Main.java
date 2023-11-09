@@ -111,7 +111,7 @@ public class Main {
                         IntStream.range(0, RUNTIME)
                                 .sorted()
                                 .mapToObj(rIndex -> forkJoinPool.submit(() -> {
-                                    seed = new Random().nextInt(10000, 11000);
+                                    seed = new Random().nextInt(8000000, 9000000);
                                     logger.setSeed(rIndex, seed);
                                     return runVABCSCP(rIndex, seed, best);
                                 })).toList();

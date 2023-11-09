@@ -2,7 +2,6 @@ package main.java.variables;
 
 
 import main.java.utils.Tuple;
-import main.java.utils.Tuple2;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -24,7 +23,6 @@ public class AbcVars {
     private Random RANDOM;
     private long SEED;
     private int initializeMethod;
-
     private int localSearchMethod;
 
     public AbcVars(long seed) {
@@ -138,8 +136,8 @@ public class AbcVars {
         this.localSearchMethod = localSearchMethod;
     }
 
-    public double getNextDouble(){
-        return this.RANDOM.nextDouble();
+    public double getNextDouble() {
+        return Math.round(this.RANDOM.nextDouble() * 100.0) / 100.0;
     }
 
     // Custom Methods
