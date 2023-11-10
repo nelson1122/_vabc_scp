@@ -9,7 +9,6 @@ import java.util.BitSet;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.stream.IntStream;
@@ -47,13 +46,12 @@ public class Main {
         TreeMap<String, Integer> instances = new TreeMap<>(getINSTANCES());
         instances.forEach((instance, best) -> {
             try {
-                Problem.read(EnvConfig.getResourcePath(instance));
+                Problem.read(instance);
                 logger.log("Problem processing [" + instance + "] has started..");
                 logger.printInitialLog();
-                seed = 0;
 
                 for (int run = 0; run < RUNTIME; run++) {
-                    seed += 10;
+                    seed = EnvConfig.getSeed(run);
                     logger.setSeed(run, seed);
                     logger.setDateInit(run);
 
@@ -101,19 +99,18 @@ public class Main {
         TreeMap<String, Integer> instances = new TreeMap<>(getINSTANCES());
         instances.forEach((instance, best) -> {
             try {
-                Problem.read(EnvConfig.getResourcePath(instance));
+                Problem.read(instance);
                 logger.log("Problem processing [" + instance + "] has started..");
                 logger.log();
-                seed = 0;
 
                 ForkJoinPool forkJoinPool = new ForkJoinPool(RUNTIME);
                 List<ForkJoinTask<Tuple3<Integer, Integer, BitSet>>> results =
                         IntStream.range(0, RUNTIME)
                                 .sorted()
-                                .mapToObj(rIndex -> forkJoinPool.submit(() -> {
-                                    seed = new Random().nextInt(8000000, 9000000);
-                                    logger.setSeed(rIndex, seed);
-                                    return runVABCSCP(rIndex, seed, best);
+                                .mapToObj(run -> forkJoinPool.submit(() -> {
+                                    seed = EnvConfig.getSeed(run);
+                                    logger.setSeed(run, seed);
+                                    return runVABCSCP(run, seed, best);
                                 })).toList();
 
                 forkJoinPool.shutdown();

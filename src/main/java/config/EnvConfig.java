@@ -5,6 +5,7 @@ import main.java.variables.ScpVars;
 import java.util.HashMap;
 import java.util.Map;
 
+import static main.java.config.ParamsConfig.RUNTIME;
 import static main.java.variables.ScpVars.setInstance;
 
 public class EnvConfig {
@@ -14,8 +15,13 @@ public class EnvConfig {
     private static int localsearch = 0;
     private static String initializeName;
     private static String localSearchName;
+    private static int[] seeds;
 
     private EnvConfig() {
+    }
+
+    public static boolean isDev() {
+        return dev;
     }
 
     public static boolean isMultithread() {
@@ -38,13 +44,8 @@ public class EnvConfig {
         return localSearchName;
     }
 
-    public static String getResourcePath(String instance) {
-        return EnvConfig.dev ?
-                "src/main/resources/" + instance + ".txt" :
-                "/main/resources/" + instance + ".txt";
-    }
-    public static boolean isDev() {
-        return dev;
+    public static int getSeed(int run) {
+        return seeds[run];
     }
 
     public static void setEnvironment() {
@@ -59,7 +60,8 @@ public class EnvConfig {
 
         setInitializeName();
         setLocalSearchName();
-        setINSTANCES();
+        setInstances();
+        setSeeds();
     }
 
     private static void setInitializeName() {
@@ -80,9 +82,8 @@ public class EnvConfig {
         localSearchName = names.get(localsearch);
     }
 
-    private static void setINSTANCES() {
+    private static void setInstances() {
         ScpVars.setINSTANCES(new HashMap<>());
-/*
         setInstance("scp41", 429);
 
         setInstance("scpnre1", 29);
@@ -95,11 +96,10 @@ public class EnvConfig {
         setInstance("scpnrf2", 15);
         setInstance("scpnrf3", 14);
         setInstance("scpnrf4", 14);
- */
-//        setInstance("scpnrf5", 13);
+        setInstance("scpnrf5", 13);
 
-//        setInstance("scpnrg1", 176);
-//        setInstance("scpnrg2", 154);
+        setInstance("scpnrg1", 176);
+        setInstance("scpnrg2", 154);
         setInstance("scpnrg3", 166);
         setInstance("scpnrg4", 168);
         setInstance("scpnrg5", 168);
@@ -109,5 +109,19 @@ public class EnvConfig {
         setInstance("scpnrh3", 59);
         setInstance("scpnrh4", 58);
         setInstance("scpnrh5", 55);
+    }
+
+    private static void setSeeds() {
+        seeds = new int[RUNTIME];
+        seeds[0] = 8907208;
+        seeds[1] = 8621272;
+        seeds[2] = 8321806;
+        seeds[3] = 8884086;
+        seeds[4] = 8224371;
+        seeds[5] = 8122581;
+        seeds[6] = 8032568;
+        seeds[7] = 8697406;
+        seeds[8] = 8808423;
+        seeds[9] = 8833610;
     }
 }

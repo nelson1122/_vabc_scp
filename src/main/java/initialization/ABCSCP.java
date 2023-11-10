@@ -4,15 +4,10 @@ import main.java.utils.CommonUtils;
 import main.java.variables.AbcVars;
 
 import java.util.BitSet;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static main.java.config.ParamsConfig.RC_SIZE;
-import static main.java.variables.ScpVars.COLUMNS;
-import static main.java.variables.ScpVars.ROWS;
-import static main.java.variables.ScpVars.getColumnsCoveringRow;
-import static main.java.variables.ScpVars.getRowsCoveredByColumn;
+import static main.java.variables.ScpVars.*;
 
 
 public class ABCSCP {
@@ -24,8 +19,8 @@ public class ABCSCP {
     }
 
     public BitSet createSolution() {
-        BitSet fs = new BitSet(COLUMNS);
-        int[] u = new int[ROWS];
+        BitSet fs = new BitSet();
+        int[] u = new int[getROWS()];
 
         generateSolution(fs, u);
         removeRedundantColumns(fs, u);
@@ -34,39 +29,35 @@ public class ABCSCP {
     }
 
     private void generateSolution(BitSet fs, int[] u) {
-        IntStream.range(0, ROWS)
-                .boxed()
-                .forEach(i -> {
-                    BitSet ai = getColumnsCoveringRow(i);
-                    int randomRC = cUtils.randomNumber(RC_SIZE);
-                    int j = ai.stream().boxed().toList().get(randomRC);
+        for (int i = 0; i < getROWS(); i++) {
+            BitSet ai = getColumnsCoveringRow(i);
+            int randomRC = cUtils.randomNumber(RC_SIZE);
+            int j = ai.stream().boxed().toList().get(randomRC);
 
-                    if (!fs.get(j)) {
-                        fs.set(j);
-                        BitSet bj = getRowsCoveredByColumn(j);
-                        bj.stream().boxed().forEach(idx -> u[idx]++);
-                    }
-                });
+            if (!fs.get(j)) {
+                fs.set(j);
+                BitSet bj = getRowsCoveredByColumn(j);
+                bj.stream().boxed().forEach(idx -> u[idx]++);
+            }
+        }
     }
 
     private void removeRedundantColumns(BitSet fs, int[] u) {
-        int numColumns = fs.cardinality() + 1;
-        IntStream.range(1, numColumns)
-                .boxed()
-                .sorted(Comparator.reverseOrder())
-                .forEach(t -> {
-                    int randomNum = cUtils.randomNumber(t);
-                    int j = fs.stream().boxed().toList().get(randomNum);
-                    BitSet bj = getRowsCoveredByColumn(j);
+        int t = fs.cardinality();
+        while (t > 0) {
+            int randomNum = cUtils.randomNumber(t);
+            int j = fs.stream().boxed().toList().get(randomNum);
+            BitSet bj = getRowsCoveredByColumn(j);
 
-                    List<Integer> rowsCoveredByOneColumn =
-                            bj.stream().boxed().filter(i -> u[i] < 2).toList();
+            List<Integer> rowsCoveredByOneColumn =
+                    bj.stream().boxed().filter(i -> u[i] < 2).toList();
 
-                    if (rowsCoveredByOneColumn.isEmpty()) {
-                        fs.clear(j);
-                        bj.stream().boxed().forEach(idx -> u[idx]--);
-                    }
-                });
+            if (rowsCoveredByOneColumn.isEmpty()) {
+                fs.clear(j);
+                bj.stream().boxed().forEach(idx -> u[idx]--);
+            }
+            t--;
+        }
     }
 
 }

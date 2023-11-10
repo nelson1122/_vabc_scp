@@ -19,9 +19,9 @@ public class Problem {
     private Problem() {
     }
 
-    public static void read(String filePath) throws IOException {
-        logger.log("Loading problem [" + filePath + "] ...");
-        Scanner scanner = readFile(filePath);
+    public static void read(String instance) throws IOException {
+        logger.log("Loading problem [" + instance + "] ...");
+        Scanner scanner = readFile(instance);
 
         setROWS(scanner.nextInt());
         setCOLUMNS(scanner.nextInt());
@@ -67,16 +67,18 @@ public class Problem {
         }
 
         scanner.close();
-        logger.log("Problem [" + filePath + "] has been loaded.");
+        logger.log("Problem [" + instance + "] has been loaded.");
     }
 
 
-    private static Scanner readFile(String filePath) throws IOException {
+    private static Scanner readFile(String fileName) throws IOException {
         if (EnvConfig.isDev()) {
-            File file = new File(filePath);
+            String path = "src/main/resources/" + fileName + ".txt";
+            File file = new File(path);
             return new Scanner(file);
         } else {
-            InputStream file = Problem.class.getResourceAsStream(filePath);
+            String path = "/main/resources/" + fileName + ".txt";
+            InputStream file = Problem.class.getResourceAsStream(path);
             return new Scanner(file);
         }
     }
