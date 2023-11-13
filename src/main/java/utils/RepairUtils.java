@@ -16,8 +16,8 @@ public class RepairUtils {
         this.cUtils = new CommonUtils(vr);
     }
 
-    public int getColumnMinRatio(BitSet uncoveredRows, int rowIndex) {
-        BitSet ai = getColumnsCoveringRow(rowIndex);
+    public int getColumnMinRatio(BitSet uncoveredRows, int i) {
+        BitSet ai = getColumnsCoveringRow(i);
         return ai.stream()
                 .boxed()
                 .map(j -> {

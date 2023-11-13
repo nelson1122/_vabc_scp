@@ -5,20 +5,19 @@ import main.java.variables.AbcVars;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static main.java.config.ParamsConfig.*;
 
 
 public class BeeUtils {
-    private final AbcVars vr;
     private final CommonUtils cUtils;
     private final List<Integer> addedCols;
+    private final List<Integer> droppedCols;
 
     public BeeUtils(AbcVars vr) {
-        this.vr = vr;
         this.cUtils = new CommonUtils(vr);
         this.addedCols = new ArrayList<>();
+        this.droppedCols = new ArrayList<>();
     }
 
     public void addColumns(BitSet cfs, BitSet rfs) {
@@ -29,36 +28,21 @@ public class BeeUtils {
         int dc = dCols.cardinality();
         int colAdd;
 
-        boolean addAllColumns = false;
         if (n > 35) {
-            colAdd = COL_ADD_1;
-            if (dc <= COL_ADD_1) {
-                addAllColumns = true;
-            }
+            colAdd = Math.min(dc, COL_ADD_1);
         } else {
-            colAdd = COL_ADD_2;
-            if (dc <= COL_ADD_2) {
-                addAllColumns = true;
-            }
+            colAdd = Math.min(dc, COL_ADD_2);
         }
 
-        if (addAllColumns) {
-            distinctColumns
-                    .forEach(j -> {
-                        addedCols.add(j);
-                        cfs.set(j);
-                    });
-        } else {
-            IntStream.range(0, dc)
-                    .map(num -> vr.getRANDOM().nextInt(dc))
-                    .distinct()
-                    .map(distinctColumns::get)
-                    .limit(colAdd)
-                    .boxed()
-                    .forEach(j -> {
-                        addedCols.add(j);
-                        cfs.set(j);
-                    });
+        while (colAdd > 0) {
+            int index = cUtils.randomNumber(dc);
+            int j = distinctColumns.get(index);
+
+            if (!addedCols.contains(j)) {
+                cfs.set(j);
+                addedCols.add(j);
+                colAdd--;
+            }
         }
     }
 
@@ -76,15 +60,17 @@ public class BeeUtils {
             colDrop = COL_DROP_2;
         }
 
-        IntStream.range(0, n)
-                .map(num -> vr.getRANDOM().nextInt(n))
-                .distinct()
-                .map(columns::get)
-                .filter(j -> !addedCols.contains(j))
-                .limit(colDrop)
-                .boxed()
-                .forEach(cfs::clear);
+        while (colDrop > 0) {
+            int index = cUtils.randomNumber(n);
+            int j = columns.get(index);
 
+            if (!addedCols.contains(j) && !droppedCols.contains(j)) {
+                cfs.clear(j);
+                droppedCols.add(j);
+                colDrop--;
+            }
+        }
         addedCols.clear();
+        droppedCols.clear();
     }
 }

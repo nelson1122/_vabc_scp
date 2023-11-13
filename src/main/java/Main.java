@@ -29,9 +29,10 @@ public class Main {
 
         logger.log("Variant of the Artificial Bee Colony Algorithm ABC_SCP to solve the Set Covering Problem");
         logger.log("University of Cauca, 2023");
-        logger.log("Initialize Method: " + EnvConfig.getInitializeName() + " | " +
-                "LocalSearch Method: " + EnvConfig.getLocalSearchName() + " | " +
-                "Multi-thread: " + EnvConfig.isMultithread());
+        logger.log("Initialize: " + EnvConfig.getInitializeName() + " | " +
+                "LocalSearch: " + EnvConfig.getLocalSearchName() + " | " +
+                "Multi-thread: " + EnvConfig.isMultithread() + " | " +
+                "Random seed:" + EnvConfig.isRandseed());
 
         if (EnvConfig.isMultithread()) {
             runVABCSCPMultiThread();

@@ -38,10 +38,7 @@ public class ABCSCP {
 
             cfs.stream()
                     .boxed()
-                    .map(j -> new Tuple(j, (double) getCost(j)))
-                    .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2)
-                            .thenComparing(Tuple::getT1)))
-                    .map(Tuple::getT1)
+                    .sorted(Collections.reverseOrder())
                     .forEach(j -> {
                         List<Integer> rowsCoveredByOneColumn = new ArrayList<>();
                         BitSet bj = getRowsCoveredByColumn(j);

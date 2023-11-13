@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static main.java.config.ParamsConfig.Pa;
+import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRatioCostRowsCovered;
 
 
@@ -33,18 +34,18 @@ public class Repair {
     private void makeSolutionFeasible(BitSet cfs, BitSet uncoveredRows) {
         while (!uncoveredRows.isEmpty()) {
             List<Integer> uncoveredRowsList = uncoveredRows.stream().boxed().toList();
-            int indexRowUncovered = uncoveredRowsList.get(0);
-            int columnIndex;
+            int row = uncoveredRowsList.get(0);
+            int j;
 
             double r = vr.getNextDouble();
 
-            if (r < Pa) {
-                columnIndex = rUtils.getColumnMinRatio(uncoveredRows, indexRowUncovered);
+            if (r <= Pa) {
+                j = rUtils.getColumnMinRatio(uncoveredRows, row);
             } else {
-                columnIndex = rUtils.selectRandomColumnFromRCL(indexRowUncovered);
+                j = rUtils.selectRandomColumnFromRCL(row);
             }
 
-            cfs.set(columnIndex);
+            cfs.set(j);
             uncoveredRows = cUtils.findUncoveredRows(cfs);
         }
     }
@@ -54,14 +55,13 @@ public class Repair {
         cfsCopy.stream()
                 .boxed()
                 .map(j -> new Tuple(j, getRatioCostRowsCovered(j)))
-                .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2)
-                        .thenComparing(Tuple::getT1)))
+                .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2).thenComparing(Tuple::getT1)))
                 .map(Tuple::getT1)
-                .forEach(columnIndex -> {
-                    cfs.clear(columnIndex);
+                .forEach(j -> {
+                    cfs.clear(j);
                     BitSet uncoveredRows = cUtils.findUncoveredRows(cfs);
                     if (!uncoveredRows.isEmpty()) {
-                        cfs.set(columnIndex);
+                        cfs.set(j);
                     }
                 });
     }

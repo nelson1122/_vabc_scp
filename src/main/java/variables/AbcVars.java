@@ -137,7 +137,8 @@ public class AbcVars {
     }
 
     public double getNextDouble() {
-        return Math.round(this.RANDOM.nextDouble() * 100.0) / 100.0;
+        // return Math.round(this.RANDOM.nextDouble() * 100.0) / 100.0;
+        return this.RANDOM.nextDouble();
     }
 
     // Custom Methods
