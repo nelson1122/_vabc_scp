@@ -8,13 +8,14 @@ import main.java.variables.ScpVars;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static main.java.config.ParamsConfig.COL_DROP_1;
+import static main.java.config.ParamsConfig.COL_DROP_2;
 import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
-    private final double Pa = 0.2;
 
     public IteratedLS(AbcVars vr) {
         this.vr = vr;
@@ -28,7 +29,6 @@ public class IteratedLS {
             List<BitSet> groupedLists = grouping(fs);
             Stack<BitSet> Q = new Stack<>();
             Q.push(groupedLists.get(0));
-            Q.push(groupedLists.get(1));
 
             while (!Q.isEmpty()) {
                 BitSet newfs = (BitSet) fs.clone();
@@ -39,7 +39,6 @@ public class IteratedLS {
                     fs = (BitSet) newfs.clone();
                     List<BitSet> newGroupedLists = grouping(newfs);
                     Q.push(newGroupedLists.get(0));
-                    Q.push(newGroupedLists.get(1));
                     improved = true;
                 }
             }
@@ -49,24 +48,19 @@ public class IteratedLS {
 
     private List<BitSet> grouping(BitSet fs) {
         BitSet L1 = new BitSet();
-        BitSet L2 = new BitSet();
 
-        fs.stream()
-                .boxed()
-                .forEach(j -> {
-                    double r = vr.getNextDouble();
-                    if (r < Pa) {
-                        if (vr.getRANDOM().nextBoolean()) {
-                            L1.set(j);
-                        } else {
-                            L2.set(j);
-                        }
-                    }
-                });
+        List<Integer> columns = fs.stream().boxed().toList();
+
+        int nCols = fs.cardinality() > 35 ? COL_DROP_1 : COL_DROP_2;
+
+        vr.getRANDOM().ints(0, fs.cardinality())
+                .distinct()
+                .limit(nCols)
+                .map(columns::get)
+                .boxed().forEach(L1::set);
 
         List<BitSet> groupedLists = new ArrayList<>();
         groupedLists.add(L1);
-        groupedLists.add(L2);
         return groupedLists;
     }
 
