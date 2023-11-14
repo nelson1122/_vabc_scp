@@ -129,14 +129,14 @@ public class EnvConfig {
         } else {
             seeds[0] = 8261063;
             seeds[1] = 8448565;
-            seeds[2] = 8111773;
-            seeds[3] = 8125663;
-            seeds[4] = 8752766;
-            seeds[5] = 8198653;
-            seeds[6] = 8645389;
-            seeds[7] = 8712653;
-            seeds[8] = 8202972;
-            seeds[9] = 8833610;
+            seeds[2] = 8723113;
+            seeds[3] = 8496304;
+            seeds[4] = 8279970;
+            seeds[5] = 8493548;
+            seeds[6] = 8980630;
+            seeds[7] = 8056017;
+            seeds[8] = 8216860;
+            seeds[9] = 8132915;
         }
     }
 }
