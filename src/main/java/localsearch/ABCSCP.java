@@ -1,20 +1,11 @@
 package main.java.localsearch;
 
-import main.java.utils.Tuple;
 import main.java.variables.ScpVars;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static main.java.variables.ScpVars.getROWS;
-import static main.java.variables.ScpVars.getColumnsCoveringRow;
-import static main.java.variables.ScpVars.getCost;
-import static main.java.variables.ScpVars.getRowsCoveredByColumn;
+import static main.java.variables.ScpVars.*;
 
 public class ABCSCP {
     public ABCSCP() {

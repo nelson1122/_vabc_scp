@@ -5,11 +5,7 @@ import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 import main.java.variables.ScpVars;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static main.java.variables.ScpVars.getCost;
@@ -18,7 +14,7 @@ import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
-    private final int Pa = 92;
+    private final double Pa = 0.2;
 
     public IteratedLS(AbcVars vr) {
         this.vr = vr;

@@ -10,10 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static main.java.variables.ScpVars.getColumnsCoveringRow;
-import static main.java.variables.ScpVars.getCost;
-import static main.java.variables.ScpVars.getROWINTS;
-import static main.java.variables.ScpVars.getRowsCoveredByColumn;
+import static main.java.variables.ScpVars.*;
 
 public class IterativeConstruction {
 

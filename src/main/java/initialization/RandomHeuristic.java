@@ -5,17 +5,9 @@ import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 import main.java.variables.ScpVars;
 
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
-import static main.java.variables.ScpVars.getCOLUMNS;
-import static main.java.variables.ScpVars.getColumnsCoveringRow;
-import static main.java.variables.ScpVars.getCost;
-import static main.java.variables.ScpVars.getROWS;
-import static main.java.variables.ScpVars.getRowsCoveredByColumn;
+import static main.java.variables.ScpVars.*;
 
 public class RandomHeuristic {
     private final CommonUtils cUtils;
@@ -47,7 +39,6 @@ public class RandomHeuristic {
                     int Li = getColumnsCoveringRow(i).size();
                     return new Tuple2<>(i, (double) 1 / Li);
                 })
-                //.sorted(Collections.reverseOrder(Comparator.comparingDouble(Tuple2::getT2)))
                 .sorted(Comparator.comparingDouble(Tuple2::getT2))
                 .limit(10)
                 .map(Tuple2::getT1)

@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import static main.java.config.ParamsConfig.Pa;
-import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRatioCostRowsCovered;
 
 
