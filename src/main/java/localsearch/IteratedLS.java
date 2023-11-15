@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import static main.java.config.ParamsConfig.COL_DROP_1;
-import static main.java.config.ParamsConfig.COL_DROP_2;
 import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 
@@ -60,20 +58,25 @@ public class IteratedLS {
         List<Integer> columns = fs.stream().boxed().toList();
 
         int n = fs.cardinality();
-        int nCols = n > 35 ? COL_DROP_1 : COL_DROP_2;
+        int nCols = n > 35 ? 16 : 6;
 
-        vr.getRANDOM().ints(0, n)
-                .distinct()
-                .limit(nCols)
-                .map(columns::get)
-                .boxed().forEach(j -> {
-                    double r = vr.getNextDouble();
-                    if (r < Pa) {
-                        L1.set(j);
-                    } else {
-                        L2.set(j);
-                    }
-                });
+
+        List<Integer> droppedCols = new ArrayList<>();
+        while (nCols > 0) {
+            int index = cUtils.randomNumber(n);
+            int j = columns.get(index);
+
+            if (!droppedCols.contains(j)) {
+                double r = vr.getNextDouble();
+                if (r < Pa) {
+                    L1.set(j);
+                } else {
+                    L2.set(j);
+                }
+                droppedCols.add(j);
+                nCols--;
+            }
+        }
 
         List<BitSet> groupedLists = new ArrayList<>();
         groupedLists.add(L1);
