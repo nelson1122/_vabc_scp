@@ -3,6 +3,7 @@ package main.java;
 
 import main.java.utils.BeeUtils;
 import main.java.utils.CommonUtils;
+import main.java.utils.RepairUtils;
 import main.java.utils.Tuple;
 import main.java.variables.AbcVars;
 
@@ -19,6 +20,7 @@ public class BeeColony {
     private Repair repair;
     private CommonUtils cUtils;
     private BeeUtils bUtils;
+    private RepairUtils rUtils;
     private Initialization initialization;
     private LocalSearch localSearch;
 
@@ -30,6 +32,7 @@ public class BeeColony {
         this.repair = new Repair(vr);
         this.cUtils = new CommonUtils(vr);
         this.bUtils = new BeeUtils(vr);
+        this.rUtils = new RepairUtils(vr);
         this.initialization = new Initialization(vr);
         this.localSearch = new LocalSearch(vr);
     }
@@ -58,27 +61,9 @@ public class BeeColony {
                 .boxed()
                 .forEach(foodNum -> {
                     BitSet fs = vr.getFoodSource(foodNum);
+                    fs = localSearch.apply(fs);
+                    memorizeSource(fs, foodNum);
 
-                    int rIndex = cUtils.randomFoodSource(foodNum);
-                    BitSet rfs = vr.getFoodSource(rIndex);
-
-                    BitSet distinctColumns = cUtils.findDistinctColumns(fs, rfs);
-
-                    if (!distinctColumns.isEmpty()) {
-                        bUtils.addColumns(fs, rfs);
-                        bUtils.dropColumns(fs);
-                        BitSet uncoveredRows = cUtils.findUncoveredRows(fs);
-                        if (!uncoveredRows.isEmpty()) {
-                            repair.applyRepairSolution(fs, uncoveredRows);
-                        }
-
-                        fs = localSearch.apply(fs);
-
-                        memorizeSource(fs, foodNum);
-
-                    } else {
-                        generateScoutBee(foodNum);
-                    }
                 });
     }
 
@@ -99,14 +84,6 @@ public class BeeColony {
                     }
 
                     BitSet fs = vr.getFoodSource(foodNumber);
-                    BitSet distinctColumns = cUtils.getColumnsRandomFoodSource(fs, foodNumber);
-                    bUtils.addColumns(fs, distinctColumns);
-                    bUtils.dropColumns(fs);
-                    BitSet uncoveredRows = cUtils.findUncoveredRows(fs);
-                    if (!uncoveredRows.isEmpty()) {
-                        repair.applyRepairSolution(fs, uncoveredRows);
-                    }
-
                     fs = localSearch.apply(fs);
 
                     memorizeSource(fs, foodNumber);

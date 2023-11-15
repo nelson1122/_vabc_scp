@@ -27,7 +27,7 @@ public class Repair {
 
     public void applyRepairSolution(BitSet cfs, BitSet uncoveredRows) {
         makeSolutionFeasible(cfs, uncoveredRows);
-        removeRedundantColumnsStream(cfs);
+        rUtils.removeRedundantColumnsStream(cfs);
     }
 
     private void makeSolutionFeasible(BitSet cfs, BitSet uncoveredRows) {
@@ -47,21 +47,5 @@ public class Repair {
             cfs.set(j);
             uncoveredRows = cUtils.findUncoveredRows(cfs);
         }
-    }
-
-    private void removeRedundantColumnsStream(BitSet cfs) {
-        BitSet cfsCopy = (BitSet) cfs.clone();
-        cfsCopy.stream()
-                .boxed()
-                .map(j -> new Tuple(j, getRatioCostRowsCovered(j)))
-                .sorted(Collections.reverseOrder(Comparator.comparing(Tuple::getT2).thenComparing(Tuple::getT1)))
-                .map(Tuple::getT1)
-                .forEach(j -> {
-                    cfs.clear(j);
-                    BitSet uncoveredRows = cUtils.findUncoveredRows(cfs);
-                    if (!uncoveredRows.isEmpty()) {
-                        cfs.set(j);
-                    }
-                });
     }
 }

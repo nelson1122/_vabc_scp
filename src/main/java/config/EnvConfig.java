@@ -94,19 +94,19 @@ public class EnvConfig {
         ScpVars.setINSTANCES(new HashMap<>());
 //        setInstance("scp41", 429);
 
-        setInstance("scpnre1", 29);
-        setInstance("scpnre2", 30);
-        setInstance("scpnre3", 27);
-        setInstance("scpnre4", 28);
-        setInstance("scpnre5", 28);
-
-        setInstance("scpnrf1", 14);
-        setInstance("scpnrf2", 15);
-        setInstance("scpnrf3", 14);
-        setInstance("scpnrf4", 14);
-        setInstance("scpnrf5", 13);
-
-        setInstance("scpnrg1", 176);
+//        setInstance("scpnre1", 29);
+//        setInstance("scpnre2", 30);
+//        setInstance("scpnre3", 27);
+//        setInstance("scpnre4", 28);
+//        setInstance("scpnre5", 28);
+//
+//        setInstance("scpnrf1", 14);
+//        setInstance("scpnrf2", 15);
+//        setInstance("scpnrf3", 14);
+//        setInstance("scpnrf4", 14);
+//        setInstance("scpnrf5", 13);
+//
+//        setInstance("scpnrg1", 176);
         setInstance("scpnrg2", 154);
         setInstance("scpnrg3", 166);
         setInstance("scpnrg4", 168);

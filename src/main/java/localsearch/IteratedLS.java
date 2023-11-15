@@ -1,6 +1,7 @@
 package main.java.localsearch;
 
 import main.java.utils.CommonUtils;
+import main.java.utils.RepairUtils;
 import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 import main.java.variables.ScpVars;
@@ -18,11 +19,13 @@ import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
+    private final RepairUtils rUtils;
     private final double Pa = 0.5;
 
     public IteratedLS(AbcVars vr) {
         this.vr = vr;
         this.cUtils = new CommonUtils(vr);
+        this.rUtils = new RepairUtils(vr);
     }
 
     public BitSet applyLocalSearch(BitSet fs) {
@@ -39,6 +42,7 @@ public class IteratedLS {
                 BitSet L = Q.pop();
                 L.stream().forEach(newfs::clear);
                 randomGreedy(newfs);
+                rUtils.removeRedundantColumnsStream(newfs);
                 if (fitnessImproved(fs, newfs)) {
                     fs = (BitSet) newfs.clone();
                     List<BitSet> newGroupedLists = grouping(newfs);
@@ -58,7 +62,7 @@ public class IteratedLS {
         List<Integer> columns = fs.stream().boxed().toList();
 
         int n = fs.cardinality();
-        int nCols = n > 35 ? 16 : 6;
+        int nCols = n > 35 ? 20 : 6;
 
 
         List<Integer> droppedCols = new ArrayList<>();
