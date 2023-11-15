@@ -5,7 +5,11 @@ import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 import main.java.variables.ScpVars;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static main.java.config.ParamsConfig.COL_DROP_1;
@@ -16,6 +20,7 @@ import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
+    private final double Pa = 0.5;
 
     public IteratedLS(AbcVars vr) {
         this.vr = vr;
@@ -29,6 +34,7 @@ public class IteratedLS {
             List<BitSet> groupedLists = grouping(fs);
             Stack<BitSet> Q = new Stack<>();
             Q.push(groupedLists.get(0));
+            Q.push(groupedLists.get(1));
 
             while (!Q.isEmpty()) {
                 BitSet newfs = (BitSet) fs.clone();
@@ -39,6 +45,7 @@ public class IteratedLS {
                     fs = (BitSet) newfs.clone();
                     List<BitSet> newGroupedLists = grouping(newfs);
                     Q.push(newGroupedLists.get(0));
+                    Q.push(newGroupedLists.get(1));
                     improved = true;
                 }
             }
@@ -47,20 +54,30 @@ public class IteratedLS {
     }
 
     private List<BitSet> grouping(BitSet fs) {
-        BitSet L1 = new BitSet();
+        var L1 = new BitSet();
+        var L2 = new BitSet();
 
         List<Integer> columns = fs.stream().boxed().toList();
 
-        int nCols = fs.cardinality() > 35 ? COL_DROP_1 : COL_DROP_2;
+        int n = fs.cardinality();
+        int nCols = n > 35 ? COL_DROP_1 : COL_DROP_2;
 
-        vr.getRANDOM().ints(0, fs.cardinality())
+        vr.getRANDOM().ints(0, n)
                 .distinct()
                 .limit(nCols)
                 .map(columns::get)
-                .boxed().forEach(L1::set);
+                .boxed().forEach(j -> {
+                    double r = vr.getNextDouble();
+                    if (r < Pa) {
+                        L1.set(j);
+                    } else {
+                        L2.set(j);
+                    }
+                });
 
         List<BitSet> groupedLists = new ArrayList<>();
         groupedLists.add(L1);
+        groupedLists.add(L2);
         return groupedLists;
     }
 
@@ -95,6 +112,11 @@ public class IteratedLS {
     private boolean fitnessImproved(BitSet cfs, BitSet newfs) {
         int currFiness = cUtils.calculateFitnessOne(cfs);
         int newFitness = cUtils.calculateFitnessOne(newfs);
+        if (currFiness == newFitness) {
+            int currFitnessTwo = cUtils.calculateFitnessTwo(cfs);
+            int newFitnessTwo = cUtils.calculateFitnessTwo(newfs);
+            return currFitnessTwo > newFitnessTwo;
+        }
         return currFiness > newFitness;
     }
 

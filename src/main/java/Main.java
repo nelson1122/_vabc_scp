@@ -31,8 +31,8 @@ public class Main {
         logger.log("University of Cauca, 2023");
         logger.log("Initialize: " + EnvConfig.getInitializeName() + " | " +
                 "LocalSearch: " + EnvConfig.getLocalSearchName() + " | " +
-                "Multi-thread: " + EnvConfig.isMultithread() + " | " +
-                "Random seed:" + EnvConfig.isRandseed());
+                "Multi-Thread: " + EnvConfig.isMultithread() + " | " +
+                "Random-Seed: " + EnvConfig.isRandseed());
 
         if (EnvConfig.isMultithread()) {
             runVABCSCPMultiThread();
