@@ -1,8 +1,8 @@
 package main.java;
 
 import main.java.utils.CommonUtils;
-import main.java.utils.RepairUtils;
 import main.java.utils.Tuple;
+import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 
 import java.util.BitSet;
@@ -11,18 +11,20 @@ import java.util.Comparator;
 import java.util.List;
 
 import static main.java.config.ParamsConfig.Pa;
+import static main.java.config.ParamsConfig.RC_SIZE;
+import static main.java.variables.ScpVars.getColumnsCoveringRow;
+import static main.java.variables.ScpVars.getCost;
 import static main.java.variables.ScpVars.getRatioCostRowsCovered;
+import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 
 
 public class Repair {
     private final AbcVars vr;
     private final CommonUtils cUtils;
-    private final RepairUtils rUtils;
 
     public Repair(AbcVars v) {
         this.vr = v;
         this.cUtils = new CommonUtils(v);
-        this.rUtils = new RepairUtils(v);
     }
 
     public void applyRepairSolution(BitSet cfs, BitSet uncoveredRows) {
@@ -30,7 +32,7 @@ public class Repair {
         removeRedundantColumnsStream(cfs);
     }
 
-    private void makeSolutionFeasible(BitSet cfs, BitSet uncoveredRows) {
+    public void makeSolutionFeasible(BitSet cfs, BitSet uncoveredRows) {
         while (!uncoveredRows.isEmpty()) {
             List<Integer> uncoveredRowsList = uncoveredRows.stream().boxed().toList();
             int row = uncoveredRowsList.get(0);
@@ -39,9 +41,9 @@ public class Repair {
             double r = vr.getNextDouble();
 
             if (r <= Pa) {
-                j = rUtils.getColumnMinRatio(uncoveredRows, row);
+                j = getColumnMinRatio(uncoveredRows, row);
             } else {
-                j = rUtils.selectRandomColumnFromRCL(row);
+                j = selectRandomColumnFromRCL(row);
             }
 
             cfs.set(j);
@@ -49,7 +51,7 @@ public class Repair {
         }
     }
 
-    private void removeRedundantColumnsStream(BitSet cfs) {
+    public void removeRedundantColumnsStream(BitSet cfs) {
         BitSet cfsCopy = (BitSet) cfs.clone();
         cfsCopy.stream()
                 .boxed()
@@ -63,5 +65,28 @@ public class Repair {
                         cfs.set(j);
                     }
                 });
+    }
+
+    private int getColumnMinRatio(BitSet uncoveredRows, int i) {
+        BitSet ai = getColumnsCoveringRow(i);
+        return ai.stream()
+                .boxed()
+                .map(j -> {
+                    BitSet bj = getRowsCoveredByColumn(j);
+                    BitSet ur = (BitSet) uncoveredRows.clone();
+                    ur.and(bj);
+                    double ratio = (double) getCost(j) / ur.cardinality();
+                    return new Tuple2<>(j, ratio);
+                })
+                .sorted(Comparator.comparing(Tuple2::getT2))
+                .map(Tuple2::getT1)
+                .toList()
+                .get(0);
+    }
+
+    private int selectRandomColumnFromRCL(int i) {
+        int randomRC = cUtils.randomNumber(RC_SIZE);
+        BitSet ai = getColumnsCoveringRow(i);
+        return ai.stream().boxed().toList().get(randomRC);
     }
 }

@@ -1,17 +1,23 @@
 package main.java.localsearch;
 
 import main.java.utils.CommonUtils;
-import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
 
-import static main.java.variables.ScpVars.*;
+import static main.java.variables.ScpVars.COLUMNS;
+import static main.java.variables.ScpVars.getCOLUMNINTS;
+import static main.java.variables.ScpVars.getCOLUMNS;
+import static main.java.variables.ScpVars.getColumnsCoveringRow;
+import static main.java.variables.ScpVars.getCost;
+import static main.java.variables.ScpVars.getROWS;
+import static main.java.variables.ScpVars.getRowsCoveredByColumn;
 
 
 public class RowWeightedMutation {
-
-    private final AbcVars vr;
     private final CommonUtils cUtils;
     private int[] weights;
     private double[] priority;
@@ -19,21 +25,16 @@ public class RowWeightedMutation {
     private int[] timestamp = new int[COLUMNS];
 
     public RowWeightedMutation(AbcVars vr) {
-        this.vr = vr;
         this.cUtils = new CommonUtils(vr);
         this.weights = new int[getROWS()];
         this.priority = new double[getCOLUMNS()];
         this.scores = new double[getCOLUMNS()];
+
+        Arrays.fill(weights, 1);
     }
 
     public BitSet applyLocalSearch(BitSet fs) {
-        Arrays.fill(weights, 1);
-        Arrays.fill(priority, 0.0);
-        Arrays.fill(scores, 0.0);
-
-        fs = applyRowWeightMutationLocalSearch(fs);
-
-        return fs;
+        return applyRowWeightMutationLocalSearch(fs);
     }
 
     private BitSet applyRowWeightMutationLocalSearch(BitSet fs) {
@@ -43,87 +44,108 @@ public class RowWeightedMutation {
         calculateInitialPriority();
         calculateInitialScore(fsMutation);
 
-        int colDrop = 0;
-        int colAdd = 0;
-
         boolean improved = true;
+        int colDrop1 = 0;
+        int colDrop2 = 0;
 
         while (improved) {
             improved = false;
 
             while (uncoveredRows.isEmpty()) {
-                double maxScore = fsMutation.stream()
-                        .boxed()
-                        .mapToDouble(j -> scores[j])
-                        .max()
-                        .getAsDouble();
-
-                colDrop = fsMutation.stream()
-                        .filter(j -> scores[j] == maxScore)
-                        .boxed()
-                        .map(j -> new Tuple2<>(j, timestamp[j]))
-                        .sorted(Comparator.comparing(Tuple2::getT2))
-                        .map(Tuple2::getT1)
-                        .toList().get(0);
-
-                updateSolutionDrop(colDrop, fsMutation);
+                colDrop1 = findColumnToDrop(fsMutation);
+                updateSolutionDrop(colDrop1, fsMutation);
                 uncoveredRows = cUtils.findUncoveredRows(fsMutation);
-                updateScore(colDrop, uncoveredRows);
+                updateScore(colDrop1, uncoveredRows);
             }
 
-            double maxScore1 = fsMutation.stream()
-                    .boxed()
-                    .mapToDouble(j -> scores[j])
-                    .max()
-                    .getAsDouble();
-
-            int colDrop1 = fsMutation.stream()
-                    .filter(j -> scores[j] == maxScore1)
-                    .boxed()
-                    .map(j -> new Tuple2<>(j, timestamp[j]))
-                    .sorted(Comparator.comparing(Tuple2::getT2))
-                    .map(Tuple2::getT1)
-                    .toList().get(0);
-
-            updateSolutionDrop(colDrop1, fsMutation);
+            colDrop2 = findColumnToDrop(fsMutation);
+            updateSolutionDrop(colDrop2, fsMutation);
             uncoveredRows = cUtils.findUncoveredRows(fsMutation);
-            updateScore(colDrop1, uncoveredRows);
+            updateScore(colDrop2, uncoveredRows);
 
-            List<Integer> colsAdd = new ArrayList<>();
+            List<Integer> colsAdded = new ArrayList<>();
             while (!uncoveredRows.isEmpty()) {
-                int randomRow = cUtils.randomNumber(uncoveredRows.cardinality());
-                int uncoveredRow = uncoveredRows.stream().boxed().toList().get(randomRow);
-                BitSet cols = getColumnsCoveringRow(uncoveredRow);
-
-                double maxScore = cols.stream()
-                        .mapToDouble(j -> scores[j])
-                        .max()
-                        .getAsDouble();
-
-                colAdd = cols.stream()
-                        .boxed()
-                        .filter(j -> scores[j] == maxScore)
-                        .map(j -> new Tuple2<>(j, timestamp[j]))
-                        .sorted(Comparator.comparing(Tuple2::getT2))
-                        .map(Tuple2::getT1)
-                        .toList().get(0);
-
-                colsAdd.add(colAdd);
-
+                int colAdd = findColumnToAdd(uncoveredRows);
+                colsAdded.add(colAdd);
                 updateSolutionAdd(colAdd, fsMutation);
                 uncoveredRows = cUtils.findUncoveredRows(fsMutation);
                 updateScoreColumnsInSolution(fsMutation, colAdd);
                 updateRowWeights(uncoveredRows);
                 updateScoreColumnsNotInSolution(fsMutation, colAdd);
             }
-
-            if (solutionImproved(fs, fsMutation)) {
+            if (fitnessImproved(fs, fsMutation)) {
                 fs = (BitSet) fsMutation.clone();
                 improved = true;
             }
         }
 
         return fs;
+    }
+
+    private int findColumnToDrop(BitSet xj) {
+        int colDrop;
+        var columns = xj.stream().boxed().toList();
+
+        double maxScore = scores[columns.get(0)];
+        for (Integer j : columns) {
+            if (scores[j] > maxScore) {
+                maxScore = scores[j];
+            }
+        }
+
+        List<Integer> colsToDrop = new ArrayList<>();
+        for (Integer j : xj.stream().boxed().toList()) {
+            if (scores[j] == maxScore) {
+                colsToDrop.add(j);
+            }
+        }
+
+        colDrop = colsToDrop.get(0);
+        if (colsToDrop.size() > 1) {
+            int maxTimes = timestamp[colDrop];
+            for (Integer j : colsToDrop) {
+                if (timestamp[j] > maxTimes) {
+                    maxTimes = timestamp[j];
+                    colDrop = j;
+                }
+            }
+        }
+
+        return colDrop;
+    }
+
+    private int findColumnToAdd(BitSet uncoveredRows) {
+        int colAdd;
+        var uRowList = uncoveredRows.stream().boxed().toList();
+        int randRow = cUtils.randomNumber(uRowList.size());
+        var row = uRowList.get(randRow);
+        var cols = getColumnsCoveringRow(row).stream().boxed().toList();
+
+        double maxScore = scores[cols.get(0)];
+        for (Integer j : cols) {
+            if (scores[j] > maxScore) {
+                maxScore = scores[j];
+            }
+        }
+
+        List<Integer> colsToAdd = new ArrayList<>();
+        for (Integer j : cols) {
+            if (scores[j] == maxScore) {
+                colsToAdd.add(j);
+            }
+        }
+
+        colAdd = colsToAdd.get(0);
+        if (colsToAdd.size() > 1) {
+            int maxTimes = timestamp[colAdd];
+            for (Integer j : colsToAdd) {
+                if (timestamp[j] > maxTimes) {
+                    maxTimes = timestamp[j];
+                    colAdd = j;
+                }
+            }
+        }
+        return colAdd;
     }
 
     private void updateSolutionAdd(int columnIndex, BitSet xj) {
@@ -138,12 +160,16 @@ public class RowWeightedMutation {
     }
 
     private void calculateInitialPriority() {
-        getCOLUMNINTS()
-                .forEach(j -> {
-                    BitSet Bj = getRowsCoveredByColumn(j);
-                    double priority = (double) Bj.cardinality() / getCost(j);
-                    this.priority[j] = priority;
-                });
+        for (Integer j : getCOLUMNINTS()) {
+
+            BitSet Bj = getRowsCoveredByColumn(j);
+            double sum = 0.0;
+
+            for (Integer bj : Bj.stream().boxed().toList()) {
+                sum += ((double) weights[bj] / getCost(j));
+            }
+            this.priority[j] = sum;
+        }
     }
 
     private void calculateInitialScore(BitSet xj) {
@@ -174,61 +200,54 @@ public class RowWeightedMutation {
         BitSet xjc = (BitSet) xj.clone();
         BitSet Bj = getRowsCoveredByColumn(columnIndex);
 
-        xjc.stream()
-                .boxed()
-                .filter(j -> !j.equals(columnIndex))
-                .forEach(h -> {
-                    BitSet Bh = getRowsCoveredByColumn(h);
-                    Bh.and(Bj);
+        xjc.clear(columnIndex);
+        for (Integer h : xjc.stream().boxed().toList()) {
+            BitSet Bh = getRowsCoveredByColumn(h);
+            Bh.and(Bj);
 
-                    double sum = 0.0;
-                    for (int i : Bh.stream().boxed().toList()) {
-                        sum += ((double) weights[i] / getCost(h));
-                    }
+            double sum = 0.0;
+            for (int i : Bh.stream().boxed().toList()) {
+                sum += ((double) weights[i] / getCost(h));
+            }
 
-                    double score = scores[h] + sum;
+            double score = scores[h] + sum;
 
-                    scores[h] = score;
-                });
+            scores[h] = score;
+        }
     }
 
     private void updateRowWeights(BitSet uncoveredRows) {
         uncoveredRows.stream().boxed().forEach(i -> weights[i]++);
     }
 
-    private void updateScoreColumnsNotInSolution(BitSet xj, int columnIndex) {
-        BitSet Bj = getRowsCoveredByColumn(columnIndex);
+    private void updateScoreColumnsNotInSolution(BitSet xj, int j) {
+        BitSet Bj = getRowsCoveredByColumn(j);
 
-        getCOLUMNINTS()
-                .stream()
-                .filter(j -> !xj.get(j))
-                .forEach(h -> {
-                    BitSet Bh = getRowsCoveredByColumn(h);
-                    Bh.and(Bj);
+        for (int h = 0; h < getCOLUMNS(); h++) {
+            if (!xj.get(h)) {
+                BitSet Bh = getRowsCoveredByColumn(h);
+                Bh.and(Bj);
 
-                    double sum = 0.0;
-                    for (int i : Bh.stream().boxed().toList()) {
-                        sum += ((double) weights[i] / getCost(h));
-                    }
+                double sum = 0.0;
+                for (int i : Bh.stream().boxed().toList()) {
+                    sum += ((double) weights[i] / getCost(h));
+                }
 
-                    double score = scores[h] - sum;
+                double score = scores[h] - sum;
 
-                    scores[h] = score;
-                });
+                scores[h] = score;
+            }
+        }
     }
 
-
-    private boolean solutionImproved(BitSet currXj, BitSet newXj) {
-        int currFiness = cUtils.calculateFitnessOne(currXj);
-        int newFitness = cUtils.calculateFitnessOne(newXj);
-
-//        if (currFiness > newFitness) {
-//            System.out.println("Fitness improved => [" + currFiness + ", " + newFitness + "]");
-//            if (newFitness < 156) {
-//                System.out.println("BEST REACHED");
-//            }
-//        }
-
+    private boolean fitnessImproved(BitSet cfs, BitSet newfs) {
+        int currFiness = cUtils.calculateFitnessOne(cfs);
+        int newFitness = cUtils.calculateFitnessOne(newfs);
+        if (currFiness == newFitness) {
+            int currFitnessTwo = cUtils.calculateFitnessTwo(cfs);
+            int newFitnessTwo = cUtils.calculateFitnessTwo(newfs);
+            return currFitnessTwo > newFitnessTwo;
+        }
         return currFiness > newFitness;
     }
 }
