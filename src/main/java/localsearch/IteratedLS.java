@@ -9,13 +9,14 @@ import main.java.variables.ScpVars;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static main.java.config.ParamsConfig.RC_SIZE;
 import static main.java.variables.ScpVars.*;
 
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
     private final Repair repair;
-    private static final double Pa = 0.5;
+    private static final double Pb = 0.5;
     private final double[] penalties;
     private static final double ALPHA = 0.05d;
     private static final double BETHA = 0.01d;
@@ -64,7 +65,7 @@ public class IteratedLS {
         List<Integer> columns = fs.stream().boxed().toList();
 
         int n = fs.cardinality();
-        int nCols = n > 35 ? 20 : 6;
+        int nCols = n > 35 ? 18 : 6;
 
 
         List<Integer> droppedCols = new ArrayList<>();
@@ -74,7 +75,7 @@ public class IteratedLS {
 
             if (!droppedCols.contains(j)) {
                 double r = vr.getNextDouble();
-                if (r < Pa) {
+                if (r < Pb) {
                     L1.set(j);
                 } else {
                     L2.set(j);
@@ -99,35 +100,24 @@ public class IteratedLS {
                 .collect(Collectors.toList());
 
         while (!mapList.isEmpty()) {
-            int j = mapList.get(0).stream()
-                    .boxed()
-                    .map(col -> new Tuple2<>(col, calculateFunction(fs, col)))
-                    .sorted(Comparator.comparing(Tuple2::getT2))
-                    .map(Tuple2::getT1)
-                    .toList()
-                    .get(0);
+            BitSet firstMap = mapList.get(0);
+            int j = selectColumnMinRatio(fs, firstMap);
             fs.set(j);
             increasePenalty(j);
             mapList.removeIf(row -> row.get(j));
         }
         decreasePenalties(fs);
-        repair.removeRedundantColumnsStream(fs);
+//        repair.removeRedundantColumnsStream(fs);
     }
 
-    private void increasePenalty(int j) {
-        double pj = penalties[j] + ALPHA;
-        if (pj > MAX_PENALTY) pj = MAX_PENALTY;
-        penalties[j] = pj;
-    }
-
-    private void decreasePenalties(BitSet fs) {
-        for (int j = 0; j < getCOLUMNS(); j++) {
-            if (!fs.get(j)) {
-                double pj = penalties[j] - BETHA;
-                if (pj < MIN_PENALTY) pj = MIN_PENALTY;
-                penalties[j] = pj;
-            }
-        }
+    private int selectColumnMinRatio(BitSet fs, BitSet firstMap) {
+        return firstMap.stream()
+                .boxed()
+                .map(j -> new Tuple2<>(j, calculateFunction(fs, j)))
+                .sorted(Comparator.comparing(Tuple2::getT2))
+                .map(Tuple2::getT1)
+                .toList()
+                .get(0);
     }
 
     private double calculateFunction(BitSet fs, int j) {
@@ -148,4 +138,19 @@ public class IteratedLS {
         return currFiness > newFitness;
     }
 
+    private void increasePenalty(int j) {
+        double pj = penalties[j] + ALPHA;
+        if (pj > MAX_PENALTY) pj = MAX_PENALTY;
+        penalties[j] = pj;
+    }
+
+    private void decreasePenalties(BitSet fs) {
+        for (int j = 0; j < getCOLUMNS(); j++) {
+            if (!fs.get(j)) {
+                double pj = penalties[j] - BETHA;
+                if (pj < MIN_PENALTY) pj = MIN_PENALTY;
+                penalties[j] = pj;
+            }
+        }
+    }
 }
