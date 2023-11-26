@@ -1,31 +1,37 @@
 package main.java.localsearch;
 
+import main.java.Repair;
 import main.java.utils.CommonUtils;
 import main.java.utils.Tuple2;
 import main.java.variables.AbcVars;
 import main.java.variables.ScpVars;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static main.java.variables.ScpVars.getCost;
-import static main.java.variables.ScpVars.getRowsCoveredByColumn;
+import static main.java.variables.ScpVars.*;
 
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
-    private final double Pa = 0.5;
+    private final Repair repair;
+    private static final double Pa = 0.5;
+    private final double[] penalties;
+    private static final double ALPHA = 0.05d;
+    private static final double BETHA = 0.01d;
+    private static final double MIN_PENALTY = 0.5;
+    private static final double MAX_PENALTY = 1.5;
 
     public IteratedLS(AbcVars vr) {
         this.vr = vr;
         this.cUtils = new CommonUtils(vr);
+        this.repair = new Repair(vr);
+        this.penalties = new double[COLUMNS];
     }
 
     public BitSet applyLocalSearch(BitSet fs) {
+        Arrays.fill(this.penalties, 1);
+
         boolean improved = true;
         while (improved) {
             improved = false;
@@ -58,7 +64,7 @@ public class IteratedLS {
         List<Integer> columns = fs.stream().boxed().toList();
 
         int n = fs.cardinality();
-        int nCols = n > 35 ? 16 : 6;
+        int nCols = n > 35 ? 20 : 6;
 
 
         List<Integer> droppedCols = new ArrayList<>();
@@ -101,7 +107,26 @@ public class IteratedLS {
                     .toList()
                     .get(0);
             fs.set(j);
+            increasePenalty(j);
             mapList.removeIf(row -> row.get(j));
+        }
+        decreasePenalties(fs);
+        repair.removeRedundantColumnsStream(fs);
+    }
+
+    private void increasePenalty(int j) {
+        double pj = penalties[j] + ALPHA;
+        if (pj > MAX_PENALTY) pj = MAX_PENALTY;
+        penalties[j] = pj;
+    }
+
+    private void decreasePenalties(BitSet fs) {
+        for (int j = 0; j < getCOLUMNS(); j++) {
+            if (!fs.get(j)) {
+                double pj = penalties[j] - BETHA;
+                if (pj < MIN_PENALTY) pj = MIN_PENALTY;
+                penalties[j] = pj;
+            }
         }
     }
 
@@ -109,7 +134,7 @@ public class IteratedLS {
         BitSet uncoveredRows = cUtils.findUncoveredRows(fs);
         BitSet rowsCoveredByColumn = getRowsCoveredByColumn(j);
         uncoveredRows.and(rowsCoveredByColumn);
-        return (double) getCost(j) / uncoveredRows.cardinality();
+        return ((double) getCost(j) * penalties[j]) / uncoveredRows.cardinality();
     }
 
     private boolean fitnessImproved(BitSet cfs, BitSet newfs) {
