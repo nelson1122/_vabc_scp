@@ -9,7 +9,6 @@ import main.java.variables.ScpVars;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static main.java.config.ParamsConfig.RC_SIZE;
 import static main.java.variables.ScpVars.*;
 
 public class IteratedLS {
@@ -65,7 +64,7 @@ public class IteratedLS {
         List<Integer> columns = fs.stream().boxed().toList();
 
         int n = fs.cardinality();
-        int nCols = n > 35 ? 18 : 6;
+        int nCols = n > 35 ? 20 : 6;
 
 
         List<Integer> droppedCols = new ArrayList<>();
@@ -107,7 +106,7 @@ public class IteratedLS {
             mapList.removeIf(row -> row.get(j));
         }
         decreasePenalties(fs);
-//        repair.removeRedundantColumnsStream(fs);
+        repair.removeRedundantColumnsStream(fs);
     }
 
     private int selectColumnMinRatio(BitSet fs, BitSet firstMap) {
