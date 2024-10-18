@@ -9,18 +9,14 @@ import main.java.variables.ScpVars;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static main.java.localsearch.IteratedLSParams.*;
 import static main.java.variables.ScpVars.*;
 
 public class IteratedLS {
     private final AbcVars vr;
     private final CommonUtils cUtils;
     private final Repair repair;
-    private static final double Pb = 0.5;
     private final double[] penalties;
-    private static final double ALPHA = 0.05d;
-    private static final double BETHA = 0.01d;
-    private static final double MIN_PENALTY = 0.5;
-    private static final double MAX_PENALTY = 1.5;
 
     public IteratedLS(AbcVars vr) {
         this.vr = vr;
@@ -64,7 +60,7 @@ public class IteratedLS {
         List<Integer> columns = fs.stream().boxed().toList();
 
         int n = fs.cardinality();
-        int nCols = n > 35 ? 20 : 6;
+        int nCols = n > 35 ? COL_DROP_1 : COL_DROP_2;
 
 
         List<Integer> droppedCols = new ArrayList<>();

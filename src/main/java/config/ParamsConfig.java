@@ -5,7 +5,7 @@ public class ParamsConfig {
     public static final int RC_SIZE = 6;
     public static final int FOOD_NUMBER = 50; // Food number is equal to number of employee bee
     public static final int EMPLOYED_BEES = 50;
-    public static final int ONLOOKER_BEES = 50;
+    public static final int ONLOOKER_BEES = 150; // TODO best 50
     public static final int MAX_CYCLE = 500; // 500
     public static final double Pa = 0.9d;
     public static final int COL_ADD_1 = 5;
